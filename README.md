@@ -15,8 +15,13 @@ The goal of this repo is to support SLU project teams by offering:
 ## 📂 Repository Structure
 
 main/
+
 ├── projects/          # SLU open source projects related CI/CD work
+|
 ├── templates/         # Standardized reusable GitHub Actions workflows
+|
 ├── audits/            # Audit scripts, reports, compliance checklists
+|
 ├── helpers/           # Utility scripts, shared functions, common actions
+|
 └── README.md          # Repo overview, usage instructions
