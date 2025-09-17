@@ -1,0 +1,25 @@
+Added GUI logging and updated GitHub Action to store crash logs in app.log. Updated requirements.txt to resolve EXE launch issue.
+
+What was changed?
+
+Added logging in GUI.py to capture errors and runtime information into app.log.
+
+Updated GitHub Actions workflow to upload app.log as an artifact after each run.
+
+Updated requirements.txt
+
+Why was it changed?
+
+To improve debugging and traceability of the GUI application in CI/CD pipelines.
+
+To allow maintainers to see crash logs from automated builds without needing to run the app locally.
+
+To fix EXE launch errors caused by package issues.
+
+How was it changed?
+
+Added a logging setup in GUI.py to capture info and error messages.
+
+Updated .github/workflows/... to include python GUI.py > app.log 2>&1 || true and upload the log artifact.
+
+Updated requirements.txt by removing wave that was causing the issue. It was trying to download mysql_python as dependency which caused requirements.txt to fail installing other packages.
