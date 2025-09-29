@@ -39,7 +39,7 @@ Before Implementation:
 # ---------------------------
 # Canvas API
 #   - CANVAS_API_TOKEN: Canvas access token
-#   - CANVAS_DOMAIN: e.g., "https://slu.instructure.com"
+#   - CANVAS_DOMAIN
 #   - COURSE_ID: Canvas course ID
 
 # Slack API
@@ -47,7 +47,7 @@ Before Implementation:
 #   - SLACK_INVITE_LINK: Link for inviting users (if needed)
 
 # Microsoft Graph API
-#   - GRAPH_CLIENT_ID: App (client) ID
+#   - GRAPH_CLIENT_ID: App ID
 #   - GRAPH_CLIENT_SECRET: App secret
 #   - GRAPH_TENANT_ID: Tenant ID for OAuth
 #   - BOT_EMAIL: Email address used to send invites
