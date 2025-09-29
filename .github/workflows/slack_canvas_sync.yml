@@ -44,7 +44,7 @@ jobs:
       # ---------------------------
       # Step 4: Run Bot Script
       # ---------------------------
-      # - Run hybrid_bot.py
+      # - Run Slack2Canvas.py
       # - Pass 'mode' argument from workflow_dispatch input
       # - Provide environment variables from GitHub secrets for:
       #     * Canvas API access
