@@ -100,7 +100,7 @@ Before Building Checklist:
    - Copy Bot OAuth token into GitHub secret SLACK_BOT_TOKEN
 3. Microsoft Graph:
    - Register app in Azure AD
-   - Grant "Mail.Send" or "User.Invite.All" permissions
+   - Grant "Mail.Send" permissions
    - Get Client ID, Secret, Tenant ID
    - Set BOT_EMAIL to the email account authorized to send invites
 4. Create GitHub Secrets for all tokens and IDs
