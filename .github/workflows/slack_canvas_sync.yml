@@ -1,0 +1,67 @@
+name: Slack + Canvas Bot Workflow
+
+# ---------------------------
+# Trigger
+# ---------------------------
+on:
+  workflow_dispatch:
+    # Input to choose run mode:
+    # - csv_only: generate CSV report only
+    # - auto_invite: generate CSV report and send invites
+    inputs:
+      mode:
+        description: 'Choose run mode: csv_only or auto_invite'
+        required: true
+        default: 'csv_only'
+        type: choice
+        options:
+          - csv_only
+          - auto_invite
+
+jobs:
+  hybrid_sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ---------------------------
+      # Step 1: Checkout Repository
+      # ---------------------------
+      # - Pull the code into the workflow runner
+      # - Needed to access hybrid_bot.py
+
+      # ---------------------------
+      # Step 2: Set up Python
+      # ---------------------------
+      # - Install specific Python version
+      # - Required for running the bot script
+
+      # ---------------------------
+      # Step 3: Install Dependencies
+      # ---------------------------
+      # - Install Python packages required by hybrid_bot.py
+      # - Examples: requests, pandas, slack_sdk, msal, fuzzywuzzy
+
+      # ---------------------------
+      # Step 4: Run Bot Script
+      # ---------------------------
+      # - Run hybrid_bot.py
+      # - Pass 'mode' argument from workflow_dispatch input
+      # - Provide environment variables from GitHub secrets for:
+      #     * Canvas API access
+      #     * Slack API access
+      #     * Microsoft Graph API access
+      #     * Output directory for CSV reports
+
+      # ---------------------------
+      # Step 5: Upload CSV Artifacts
+      # ---------------------------
+      # - Upload any generated CSV files as workflow artifacts
+      # - Examples: possible_mismatches.csv, invites_sent.csv
+      # - Allows download from Actions page for manual review
+
+      # ---------------------------
+      # Step 6 (Optional): Notifications
+      # ---------------------------
+      # - Notify team/admin if fuzzy mismatch CSV exists
+      # - Could be Slack message or email
+      
