@@ -1,1 +1,89 @@
+# 🧰 Tools & Utilities
 
+This directory contains scripts and helper programs designed to streamline **automation**, **auditing**, and **debugging** tasks for the OSS CI/CD ecosystem.  
+Each utility in this folder serves as a standalone or supporting tool that can be integrated into larger workflows or executed independently.
+
+---
+
+## 🪄 What This Folder Is For
+
+- Automating repetitive maintenance and data-matching tasks  
+- Verifying data consistency between systems (e.g., Canvas ↔ Slack)  
+- Generating audit or diagnostic reports  
+- Supporting CI/CD workflows with lightweight Python utilities  
+- Providing experimental or prototype scripts for operational improvements  
+
+---
+
+## ⚙️ Slack2Canvas.py — CSV-based Canvas Roster to Slack User Matcher
+
+### **Purpose**
+Matches student rosters exported from **Canvas** with Slack workspace users.  
+It detects missing or mismatched users using a combination of **custom scoring rules** and **fuzzy name matching**.
+
+### **Scoring Rules**
+1. **Same name + same `@slu.edu` email →** `best_match_score = 10`, reason = `"same name, same @slu.edu email"`
+2. **Same name + different domain email →** `best_match_score = 50`, reason = `"same name, different domain email"`
+3. **Otherwise →** compute **fuzzy name similarity** using `fuzzywuzzy`.
+
+---
+
+### **Dependencies**
+
+Install required packages:
+
+```bash
+pip install slack_sdk pandas fuzzywuzzy python-Levenshtein python-dotenv
+Setup
+Create a .env file in your project directory with:
+
+env
+Copy code
+CANVAS_CSV_PATH={path to Canvas CSV file}
+SLACK_BOT_TOKEN={Slack Bot Token with users:read and users:read.email scopes}
+OUTPUT_DIR={output directory for CSV results}
+The Canvas CSV should contain:
+
+pgsql
+Copy code
+name,email
+Usage
+Run directly:
+
+bash
+Copy code
+python Slack2Canvas.py
+The script will:
+
+Load Canvas users from the CSV
+
+Fetch Slack users via API
+
+Apply matching rules and fuzzy comparison
+
+Generate a CSV file of possible mismatches in the specified output folder
+
+Output Example (possible_mismatches.csv):
+
+canvas_name	canvas_email	best_match_score	match_reason
+john doe	john.doe@slu.edu	10	same name, same @slu.edu email
+jane smith	jsmith@gmail.com	78	fuzzy name match
+
+Notes
+Requires Slack API token with users:read and users:read.email scopes.
+
+Ignores bots and deleted Slack accounts.
+
+Default fuzzy similarity threshold: 85 (adjustable via FUZZY_THRESHOLD).
+
+🧩 Future Plans
+Add daily roster verification via CI/CD job
+
+Integrate results with Slack notifications
+
+Expand email domain matching rules
+
+Provide a web dashboard for mismatch reports
+
+Maintainer: OSS Automation Team
+Last Updated: October 2025
