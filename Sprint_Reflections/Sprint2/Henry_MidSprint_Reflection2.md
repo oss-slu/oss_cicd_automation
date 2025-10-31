@@ -1,0 +1,16 @@
+# Work Description:
+Over the past sprint, I have been focusing on designing the framework for the Slack2Canvas bot, a tool intended to streamline the process of verifying students if everyone on the Canvas course roster is on the Slack Workflow. My primary goal has been to establish a clear architecture and workflow for the project, ensuring that the bot can compare Canvas enrollment data with Slack workspace users, generate CSV reports for mismatches, and send Slack invite links using email.
+
+# Individual Efforts:
+My personal contributions during this sprint included creating a detailed Python template (Slack2Canvas.py) that outlines all planned functions, modes (csv_only and auto_invite), and required GitHub secrets. I also made a template for GitHub Actions workflow (slack_canvas_sync.yml) that defines the structure for running the bot, installing dependencies, and handling CSV artifacts. Key technical decisions included separating the workflow into two modes to allow safe testing and review before sending emails, and planning a approach that accounts for both exact email matches and fuzzy name matching. These decisions were informed by considerations of scalability, maintainability, and ensuring professional level reliability.
+
+# Collaboration:
+Collaboration has been a significant part of this sprint. I met with team members and discussed with Varma about the overall design, synchronize on sprint tasks, and share feedback on the bot architecture. During these discussions, we reviewed potential challenges with API permissions, shared insights on managing GitHub secrets, and clarified how Slack and Canvas data should be accessed. 
+
+# Challenges:
+One of the main challenges this sprint has been navigating API access and permissions. Because SLU email accounts require Okta authentication, using Microsoft Graph for sending emails initially appeared complex. Another consideration was ensuring that the bot could handle students who may exist in Slack but under slightly different names or emails, requiring a fuzzy matching approach. To address these issues, I documented the permissions needed, outlined the workflow for service mailbox access, and planned logic for handling both exact and approximate matches. Waiting for administrative access to a service mailbox also introduced a temporary delay in implementing the email sending functionality, but the planning and template creation allowed the project to progress without being blocked.
+
+# Professional Growth:
+This sprint has reinforced my skills in project planning, API integration, and collaborative software development. I have gained a deeper understanding of how to structure workflows and templates for future development, including how to manage sensitive credentials securely using GitHub secrets. I also improved my ability to anticipate technical and logistical challenges and develop structured solutions ahead of full implementation. Moreover, the team discussions have strengthened my communication and collaboration skills, emphasizing the importance of transparency and proactive engagement when coordinating tasks across multiple contributors. Overall, this sprint has contributed significantly to my growth as a software professional, equipping me with both practical technical skills and a stronger approach to collaborative development.
+
+ 
