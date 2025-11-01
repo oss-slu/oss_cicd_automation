@@ -1,0 +1,17 @@
+title: oss_cicd_automation
+authors:
+  - given-names: Srinivasa Varma Penmetsa
+    email: psvarma610@gmail.com
+  - given-names: Mehul Antony
+  - given-names: Henry Wang
+cff-version: 1.2.0
+message: If you use this software, please cite it using the metadata from this file.
+type: software
+abstract: OSS CI/CD & Automation project provides continuous integration and
+  continuous deployment (CI/CD) services to open source projects developed at
+  SLU, including automated testing, deployment pipelines, and release
+  management.
+keywords:
+  - CI/CD
+license: MIT-Modern-Variant
+repository-code: https://github.com/oss-slu/oss_cicd_automation
