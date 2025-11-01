@@ -1,0 +1,81 @@
+name: "CI/CD Service Request"
+description: "Use this form to request CI/CD assistance—tell us who you are and what support you need."
+title: "[CI/CD Request]: "
+labels: ["cicd-request"]
+assignees:
+  - oss-cicd-team
+
+body:
+  - type: input
+    id: team_name
+    attributes:
+      label: "Team Name"
+      description: "Enter your team or project name."
+      placeholder: "e.g., CI/CD Automation"
+    validations:
+      required: true
+
+  - type: input
+    id: requester_name
+    attributes:
+      label: "Your Name"
+      description: "Provide your first and last name."
+    validations:
+      required: true
+
+  - type: input
+    id: contact_email
+    attributes:
+      label: "Contact Email"
+      description: "Provide your SLU email or preferred contact email."
+    validations:
+      required: true
+
+  - type: input
+    id: repository_link
+    attributes:
+      label: "Repository Link"
+      description: "Paste the GitHub repository link that requires CI/CD support."
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_are_you_building
+    attributes:
+      label: "Project Description"
+      description: "Briefly describe what the project does and its purpose."
+    validations:
+      required: true
+
+  - type: textarea
+    id: cicd_help_needed
+    attributes:
+      label: "What CI/CD support do you need?"
+      description: |
+        Describe the support request, such as:
+        - Unit testing setup
+        - GitHub Actions workflow creation
+        - Dockerization
+        - Deployment automation
+        - Security or dependency scanning
+      placeholder: "e.g., We need automated Jest tests to run on every pull request."
+    validations:
+      required: true
+
+  - type: input
+    id: target_date
+    attributes:
+      label: "Target Completion Date"
+      description: "When do you need this completed?"
+      placeholder: "e.g., November 15, 2025"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_notes
+    attributes:
+      label: "Additional Notes (optional)"
+      description: "Share any extra details, unique environment needs, or dependencies."
+      placeholder: "e.g., Requires Windows-based testing, legacy Python version, etc."
+    validations:
+      required: false
