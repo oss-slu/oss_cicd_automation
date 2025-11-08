@@ -73,7 +73,7 @@ To further improve maintainability and performance, the following **optional rec
     restore-keys: |
       ${{ runner.os }}-modules-
 ```
-3. Adopt dynamic Docker tags
+3. **Adopt dynamic Docker tags**
    - Prevents overwriting existing builds and improves traceability across environments.
 ```tags: |
   jackcranee/sluopenproject-oss:latest
