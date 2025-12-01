@@ -1,0 +1,18 @@
+# Delivery Assessment
+For this second sprint, I was tasked with creating a foundational CI/CD setup for the DigitalBonesBox project. In order to begin understanding this project, I cloned the repository and went through its contents to get a rough idea about the files and current testing setup. Next, I reached out to the project's Tech Lead by conducting a Google Meet where she told me that currently the project lacks a systematic and organized testing methodology, which includes unit, static, integration and security tests. While all these tests would take multiple sprints to implement, she told me that for this sprint we could begin with a CI/CD setup that would eventually set the stage for other testing frameworks to be implemented. As a starting point, I began with an audit of the existing repository which highlighted that the project only had a single linting workflow and lacked structured testing, dependency scanning and deployment processes. In order to address these issues, I documented these findings in an ADR-style audit report which I added on our CI/CD repository as a markdown file which outlined current gaps and recommendations for future sprints.
+
+In terms of implementation, I was able to successfully integrate the Jest testing framework and created a specific tests/ folder which contained a sample test to verify the setup. I also extented the existing GitHub Actions workflow to automatically run ESLint and Jest on every push and pull request. I also resolved several ESLint violations, standardized code style and also ensured that all lint and test steps executed correctly both in my local machine and on GitHub Actions. While I was not able to implement advanced unit, integration or security tests, I believe that my foundational CI/CD setup will help future developers and contributors to easily expand on automated testing and CI/CD coverage.
+
+# Collaboration Evaluation
+With regards to collaboration, I maintained regular communication with my Tech Lead and the DigitalBonesBox project's Lead to ensure that I am proceeding in the right direction with regards to CI/CD deliverables and format of the audit document. Through one-on-one Google Meet sessions, calls and messages, I was able to obtain all the relevant information I needed to ensure that expectations are clarified and the deliverables are as per those expectations.
+
+# Technical Growth
+In terms of technical growth, this sprint helped me acquire a deeper understanding of CI/CD practices and principles by configuring Jest for a mixed Node and front-end codebase. I was also able to debug DOM-dependent tests which fail in Jest's Node environment while also refining my ability to use ESLint effectively. Addressing several dependency warnings and understanding which vulnerabilities affect production compared to development dependencies strengthened my awareness of security considerations in CI environments. 
+
+# Professional Development
+Beyond technical execution, this sprint helped me to deepen my understanding of foundational CI/CD principles. I was able to practice structured communication, translating technical work into clear and concise documentation (through audit document, PR description) understandable to both developers and non-technical reviewers. Time management was extremely valuable for this sprint, as I broke down the issue assigned to me in small milestones which I was able to take time out of my day to work through them.
+
+
+# Conclusion
+Overall, this experience was extremely helpful for me to deepen my technical proficiency and contribute to software development through a collaborative and communicative approach.
+
