@@ -1,0 +1,14 @@
+# Work Description
+For this sprint, I worked on the DADS project to improve and strengthen its CI pipeline for the backend. I wanted to optimize the Python testing workflow, specifically the python-testing.yml file, which currently runs tests on a single Python version without caching, database integration, or strict linting enforcement. Since DADS is a full-stack web application with a Python backend which interacts heavily with PostgreSQL, a robust and reliable pipline is extremely important. My contributions help ensure that the backend code remains stable, maintainable and consistent across different development environments, which directly supports the project's goal of providing researchers and maintainers with a reliable and accurate web application for exploring arithmetical, dynamic systems.
+
+# Individual efforts
+My primary contribution included working on the python-testing.yml file to make it more robust, maintainable and accurate. I upgraded the Python workflow by adding pip caching, enabling strict flake8 linting, incorporating coverage reporting, and configuring a PostgreSQL service within GitHub Actions. This also allowed the backend tests to run aganst an actual database instance instead of a mocked or incomplete local state. I also updated GitHub Action versions to their latest stable releases and introduced better environment scoping to avoid accidental linting of frontend files. Throughout this process, I made deliberate, careful decisions with the goal of improving CI performance, clarity, maintainability with real-world CI/CD expectations.
+
+# Collaboration
+In terms of collaboration, most of this work was done by myself. 
+
+# Challenges
+This was not the intent, but this week was challenging in terms of project deliverables such as presentations and demos, as a result of which I was unable to conduct any meetings with my Tech Lead or the lead of the DADS project. However, I made sure to stay in contact with my Tech Lead through text messages, ensuring that roles and responsibilities were clear for this sprint. We also had an in-person meeting with our Tech Lead today in which I informed him about the project I was working on and more details about the retrospective.
+
+# Professional Growth
+Overall, I believe that that this sprint contributed to my growth as a software professional. I acquired deeper experience with CI/CD tooling, workflow design, automated testing strategies and backend integration testing. I was also able to practice writing high-quality pull requests, explaining the reasoning behind the code changes I incorporated. With each sprint and each project, I feel like I am learning more about the importance of a robust CI pipeline, understanding that DevOps is a continuous process which is necessary to make a project more unified and stable.
