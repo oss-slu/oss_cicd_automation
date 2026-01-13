@@ -1,7 +1,11 @@
 title: oss_cicd_automation
 authors:
-  - given-names: "Henry "
+  - given-names: "Srinivasa "
+    family-names: Varma
+  - given-names: Henry
     family-names: Wang
+  - given-names: Mehul
+    family-names: Antony
 cff-version: 1.2.0
 message: If you use this software, please cite it using the metadata from this file.
 type: software
