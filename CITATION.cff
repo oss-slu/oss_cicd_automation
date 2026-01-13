@@ -1,9 +1,7 @@
 title: oss_cicd_automation
 authors:
-  - given-names: Srinivasa Varma Penmetsa
-    email: psvarma610@gmail.com
-  - given-names: Mehul Antony
-  - given-names: Henry Wang
+  - given-names: "Henry "
+    family-names: Wang
 cff-version: 1.2.0
 message: If you use this software, please cite it using the metadata from this file.
 type: software
