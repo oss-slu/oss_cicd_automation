@@ -3,14 +3,36 @@
   "@context": "https://w3id.org/codemeta/3.0",
   "author": [
     {
-      "familyName": "Wang",
+      "familyName": "Varma",
       "id": "_:author_1",
-      "givenName": "Henry ",
+      "givenName": "Srinivasa ",
+      "type": "Person"
+    },
+    {
+      "familyName": "Wang",
+      "id": "_:author_2",
+      "givenName": "Henry",
+      "type": "Person"
+    },
+    {
+      "familyName": "Antony",
+      "id": "_:author_3",
+      "givenName": "Mehul",
       "type": "Person"
     },
     {
       "roleName": "Tech lead",
       "schema:author": "_:author_1",
+      "type": "Role"
+    },
+    {
+      "roleName": "Developer",
+      "schema:author": "_:author_2",
+      "type": "Role"
+    },
+    {
+      "roleName": "Developer",
+      "schema:author": "_:author_3",
       "type": "Role"
     }
   ],
