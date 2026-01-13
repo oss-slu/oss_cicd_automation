@@ -3,34 +3,14 @@
   "@context": "https://w3id.org/codemeta/3.0",
   "author": [
     {
-      "email": "psvarma610@gmail.com",
+      "familyName": "Wang",
       "id": "_:author_1",
-      "givenName": "Srinivasa Varma Penmetsa",
+      "givenName": "Henry ",
       "type": "Person"
     },
     {
-      "id": "_:author_2",
-      "givenName": "Mehul Antony",
-      "type": "Person"
-    },
-    {
-      "id": "_:author_3",
-      "givenName": "Henry Wang",
-      "type": "Person"
-    },
-    {
-      "roleName": "Tech Lead",
+      "roleName": "Tech lead",
       "schema:author": "_:author_1",
-      "type": "Role"
-    },
-    {
-      "roleName": "Developer",
-      "schema:author": "_:author_2",
-      "type": "Role"
-    },
-    {
-      "roleName": "Developer",
-      "schema:author": "_:author_3",
       "type": "Role"
     }
   ],
