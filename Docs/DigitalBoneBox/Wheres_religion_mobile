@@ -1,0 +1,111 @@
+# OSS Dev Analytics — CI/CD Workflow Audit Report
+
+**Audited by:** ChatGPT  
+**Date:** February 22, 2026  
+
+**Project:** LRDA Mobile  
+**Repository:** `lrda_mobile-main`  
+
+---
+
+## Workflow Overview
+
+The `lrda_mobile` repository contains a single GitHub Actions workflow located under `.github/workflows/Native.yml`.
+
+This workflow provides a basic continuous integration pipeline that executes automated testing when code changes occur.
+
+Current automation includes:
+
+- Triggering on `push` and `pull_request` events to the `main` branch
+- Repository checkout
+- Node.js runtime setup
+- Dependency installation via Yarn
+- Automated test execution
+
+The workflow validates application behavior through testing but does not currently include advanced CI/CD capabilities such as caching, deployment, security scanning, or artifact generation.
+
+---
+
+## Workflow Template Compliance Checklist
+
+| Category | Criteria | Status | Notes |
+|--------|--------|--------|------|
+| **General Setup** | Workflow exists in `.github/workflows/` | ✅ Present | `Native.yml` detected |
+| | Workflow triggers (`on:`) defined | ✅ Present | Push & PR on `main` |
+| | Branch filters configured | ✅ Present | Limited to `main` |
+| | Manual trigger (`workflow_dispatch`) | ❌ Missing | No manual execution option |
+| **Jobs** | Jobs have descriptive names | ⚠️ Partial | Single job named `test` |
+| | Runner environment defined | ✅ Present | `ubuntu-latest` |
+| | Job dependencies (`needs:`) | ❌ Missing | Single-job workflow |
+| **Steps** | Repository checkout included | ✅ Present | `actions/checkout` |
+| | Runtime setup | ✅ Present | Node.js v20 |
+| | Dependencies installed | ✅ Present | `yarn install` |
+| | Tests executed | ✅ Present | `yarn test -u` |
+| | Dependency caching | ❌ Missing | No cache configuration |
+| | Artifact upload | ❌ Missing | No reports stored |
+| **Error Handling** | Fail-fast and logging | ⚠️ Partial | Default GitHub behavior only |
+| **Security** | Dependency scanning | ❌ Missing | No Dependabot/security scans |
+| **Build & Deployment** | Build or deploy validation | ❌ Missing | Test-only pipeline |
+| **Documentation** | CI documentation | ❌ Missing | No workflow explanation |
+
+---
+
+## Overall Assessment
+
+The `lrda_mobile` repository demonstrates early-stage CI/CD maturity.
+
+Strengths:
+
+- Automated tests run on every pull request and push
+- Environment setup is clean and reproducible
+- Minimal configuration reduces maintenance overhead
+
+Limitations:
+
+- No caching increases workflow runtime
+- No deployment validation or build verification
+- No security automation
+- Lack of manual workflow triggers
+- No artifacts or test reporting persistence
+
+The workflow effectively ensures code compiles and tests pass but does not yet provide a full CI/CD lifecycle.
+
+---
+
+## Recommendations for Improving CI/CD Health
+
+### 1. Add Dependency Caching (High Priority)
+
+Implement Yarn caching to reduce install time:
+
+- Cache `node_modules` or Yarn cache directory
+- Speeds up CI significantly
+
+---
+
+### 2. Introduce Build Verification
+
+Add a build step before testing:
+
+- Ensures production builds succeed
+- Prevents runtime deployment failures
+
+---
+
+### 3. Enable Security Automation
+
+Add:
+
+- Dependabot configuration
+- Dependency vulnerability scanning
+
+This improves long-term maintainability and security posture.
+
+---
+
+## Final Evaluation
+
+The `lrda_mobile` project has a functional but minimal CI pipeline focused solely on automated testing.
+
+Implementing caching, security checks, and build validation would elevate the workflow from basic CI to a more mature and production-ready CI/CD system.
+
