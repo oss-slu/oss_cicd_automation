@@ -1,0 +1,128 @@
+# OSS Dev Analytics — CI/CD Workflow Audit Report
+
+**Audited by:** ChatGPT  
+**Date:** February 22, 2026  
+
+**Project:** LRDA Website  
+**Repository:** `lrda_website-main`  
+
+---
+
+## Workflow Overview
+
+The `lrda_website` repository contains a comprehensive multi-stage CI/CD implementation using GitHub Actions.
+
+Active workflows are located under `.github/workflows/`, primarily centered around:
+
+- `ci-cd.yml` (primary workflow)
+- Deprecated workflows retained for manual reference
+
+The main CI/CD pipeline includes:
+
+- Intelligent concurrency control
+- Pull request and push event handling
+- Unit testing
+- End-to-end (Playwright) testing
+- Build validation
+- Artifact uploads
+- Automated Netlify deployment (preview + production)
+
+The workflow demonstrates advanced automation practices and structured job orchestration.
+
+---
+
+## Workflow Template Compliance Checklist
+
+| Category | Criteria | Status | Notes |
+|--------|--------|--------|------|
+| **General Setup** | Workflow exists in `.github/workflows/` | ✅ Present | Multiple workflows detected |
+| | Workflow triggers (`on:`) defined | ✅ Present | Push & PR logic implemented |
+| | Branch filters configured | ✅ Present | Conditional execution logic |
+| | Manual trigger (`workflow_dispatch`) | ⚠️ Partial | Present only in deprecated workflows |
+| **Jobs** | Jobs have descriptive names | ✅ Present | `check-pr`, `unit-tests`, `e2e-tests`, `deploy-netlify` |
+| | Runner environment defined | ✅ Present | `ubuntu-latest` |
+| | Job dependencies (`needs:`) | ✅ Present | Structured pipeline stages |
+| **Steps** | Repository checkout included | ✅ Present | Across all jobs |
+| | Runtime setup | ✅ Present | Node.js + pnpm |
+| | Dependencies installed | ✅ Present | Frozen lockfile installs |
+| | Tests executed | ✅ Present | Unit + Playwright E2E |
+| | Dependency caching | ✅ Present | Next.js + pnpm caching |
+| | Artifact upload | ✅ Present | Playwright reports stored |
+| **Error Handling** | Fail-fast and logging | ✅ Present | Conditional execution & validation checks |
+| **Security** | Dependency scanning | ❌ Missing | No Dependabot/security workflow detected |
+| **Build & Deployment** | Build or deploy validation | ✅ Present | Netlify preview + production deploys |
+| **Documentation** | CI documentation | ⚠️ Partial | Inline comments exist but no standalone docs |
+
+---
+
+## Overall Assessment
+
+The `lrda_website` repository exhibits high CI/CD maturity and reflects modern DevOps practices.
+
+Key strengths include:
+
+- Multi-stage pipeline architecture
+- Intelligent PR vs push handling
+- Automated preview deployments
+- Environment-aware production deployment
+- Artifact retention for debugging
+- Extensive workflow comments and safeguards
+
+The workflow goes beyond CI into a full continuous delivery system, automatically validating and deploying changes.
+
+Primary gaps are related to security automation and developer-facing documentation rather than pipeline capability.
+
+---
+
+## Recommendations for Improving CI/CD Health
+
+### 1. Add Dependency & Security Scanning (High Priority)
+
+Enable:
+
+- Dependabot updates
+- CodeQL or dependency vulnerability scans
+
+This is the largest missing component relative to pipeline maturity.
+
+---
+
+### 2. Add Dedicated Linting Stage
+
+Introduce a separate job for:
+
+- ESLint or formatting checks
+- Static analysis prior to tests
+
+Benefits:
+
+- Faster feedback
+- Clearer failure causes
+
+---
+
+### 3. Create CI/CD Documentation
+
+Add a `CI-CD.md` explaining:
+
+- Pipeline stages
+- Deployment behavior
+- Secret requirements
+- Preview vs production logic
+
+This improves onboarding for contributors.
+
+---
+
+## Final Evaluation
+
+The `lrda_website` repository demonstrates a well-designed and production-ready CI/CD pipeline.
+
+Compared to typical academic or early-stage repositories, this implementation shows:
+
+- Strong automation discipline
+- Reliable testing gates
+- Structured deployment workflows
+
+With the addition of automated security scanning and formal documentation, the project would reach excellent CI/CD maturity.
+
