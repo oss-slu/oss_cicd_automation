@@ -1,6 +1,6 @@
 # OSS Dev Analytics — CI/CD Workflow Audit Report
 
-**Audited by:** ChatGPT  
+**Audited by:** Thomas Pautler  
 **Date:** February 22, 2026  
 
 **Project:** LRDA Website  
