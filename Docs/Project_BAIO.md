@@ -1,4 +1,4 @@
-# OSS Dev Analytics --- CI/CD Workflow Audit Report
+# OSS Project BAIO --- CI/CD Workflow Audit Report
 
 **Audited by:** Justin Duong
 **Date:** February 17, 2026
@@ -108,8 +108,8 @@ However, the repository lacks:
 -   Continuous Deployment workflows
 -   CI documentation visibility (badges)
 
-The project's CI/CD maturity can be classified as **Foundational to
-Intermediate**.
+The project's CI/CD maturity can be classified as Foundational to
+Intermediate.
 It successfully automates integration checks but does not yet
 incorporate advanced DevSecOps or deployment practices.
 
