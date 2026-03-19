@@ -1,6 +1,6 @@
 Audited by: Thomas Pautler  Date: March 19, 2026
 
-Project: OSS Dev Analytics  Repository: `oss-slu/PilotDataSynchronization`
+Project: PilotDataSynchronization  Repository: `oss-slu/PilotDataSynchronization`
 
 ## Workflow Overview
 
