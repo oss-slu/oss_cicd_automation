@@ -1,0 +1,22 @@
+{
+  "title": "oss_cicd_automation",
+  "description": "OSS CI/CD & Automation project provides continuous integration and continuous deployment (CI/CD) services to open source projects developed at Saint Louis University (SLU), including automated testing, deployment pipelines, and release management.",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "other-open",
+  "keywords": ["CI/CD", "automation", "devops", "open-source"],
+  "creators": [
+    {
+      "name": "Wang, Henry",
+      "affiliation": "Saint Louis University"
+    },
+    {
+      "name": "Duong, Justin",
+      "affiliation": "Saint Louis University"
+    },
+    {
+      "name": "Pautler, Thomas",
+      "affiliation": "Saint Louis University"
+    }
+  ]
+}
