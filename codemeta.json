@@ -3,18 +3,30 @@
   "@context": "https://w3id.org/codemeta/3.0",
   "author": [
     {
+      "affiliation": {
+        "name": "Saint Louis University",
+        "type": "Organization"
+      },
       "familyName": "Varma",
       "id": "_:author_1",
       "givenName": "Srinivasa ",
       "type": "Person"
     },
     {
+      "affiliation": {
+        "name": "Saint Louis University",
+        "type": "Organization"
+      },
       "familyName": "Wang",
       "id": "_:author_2",
       "givenName": "Henry",
       "type": "Person"
     },
     {
+      "affiliation": {
+        "name": "Saint Louis University",
+        "type": "Organization"
+      },
       "familyName": "Antony",
       "id": "_:author_3",
       "givenName": "Mehul",
@@ -39,13 +51,17 @@
   "codeRepository": "https://github.com/oss-slu/oss_cicd_automation",
   "dateCreated": "2025-09-04",
   "description": "OSS CI/CD & Automation project provides continuous integration and continuous deployment (CI/CD) services to open source projects developed at SLU, including automated testing, deployment pipelines, and release management.",
+  "downloadUrl": "https://github.com/oss-slu/oss_cicd_automation/releases/tag/untagged-2101e43a918b4495d910",
   "issueTracker": "https://github.com/oss-slu/oss_cicd_automation/issues",
   "keywords": [
     "CI/CD"
   ],
   "license": "https://spdx.org/licenses/MIT-Modern-Variant",
   "programmingLanguage": [
-    "Python"
+    "Python",
+    "YML"
   ],
+  "schema:releaseNotes": "## What's Changed\n* Create speech_tagging_exe_crash_diagnostics.txt by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/5\n* SpeechTranscription logging and FIXED exe not working in windows by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/4\n* Create SpeechTranscription.md by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/6\n* Revert \"Create SpeechTranscription.md\" by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/7\n* Create DroneWorld.md by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/9\n* Create Speech_Transcription_Case_Study.md by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/8\n* Create Audit.md by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/12\n* Create SpeechTranscription.md by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/31\n* Create Slack2Canvas.py by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/30\n* Added workflowChecklist.md  by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/32\n* feat: ✨ LICENSE file added by @codefair-io[bot] in https://github.com/oss-slu/oss_cicd_automation/pull/38\n* CI-CD.Team.Document.Signed.Copy.docx by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/42\n* Revert \"CI-CD.Team.Document.Signed.Copy.docx\" by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/43\n* Add README for GitHub Action workflow templates by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/39\n* Enhance README with Tools & Utilities information by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/40\n* Add Code of Conduct for community guidelines by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/41\n* Added Sprint Reflection by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/47\n* Added Team Working Agreement by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/44\n* Added Onboarding Guide by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/45\n* Added sprint reflections by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/49\n* Revert \"Added sprint reflections\" by @SrinivasaVarmaP in https://github.com/oss-slu/oss_cicd_automation/pull/55\n* Added README for case study by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/54\n* Added contributing guide by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/48\n* (NEW) Update README for docs by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/56\n* Add README for Sprint Reflections by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/52\n* Revert \"Add README for Sprint Reflections\" by @SrinivasaVarmaP in https://github.com/oss-slu/oss_cicd_automation/pull/57\n* Created request template yml file by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/50\n* (NEW) added readme to sprint reflections by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/59\n* Create SECURITY.md by @SrinivasaVarmaP in https://github.com/oss-slu/oss_cicd_automation/pull/60\n* Moving Onboarding_Guide.pdf to Docs by @SrinivasaVarmaP in https://github.com/oss-slu/oss_cicd_automation/pull/61\n* Move CI-CD.Team.Document.Signed.Copy.docx to Docs by @SrinivasaVarmaP in https://github.com/oss-slu/oss_cicd_automation/pull/62\n* Create pull_request_template.md by @SrinivasaVarmaP in https://github.com/oss-slu/oss_cicd_automation/pull/63\n* feat: ✨ Add code metadata files by @codefair-io[bot] in https://github.com/oss-slu/oss_cicd_automation/pull/64\n* Add CoreDesk CI/CD Workflow Audit Report by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/65\n* Document Sprint 4 end reflections  by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/71\n* Add mid-sprint reflection for Sprint 5 by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/72\n* Add CI/CD Workflow Audit Report for STL Metro Data API by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/68\n* Add CI/CD Workflow Audit Report for CV Zebrafish by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/73\n* Add CI/CD Workflow Audit Report for Pi4Micronaut  by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/74\n* Create Henry_EndSprint_Reflection5.md by @ImJustHenry in https://github.com/oss-slu/oss_cicd_automation/pull/76\n* Added end of sprint docs - Mehul Antony by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/78\n* Added mid sprint docs by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/77\n* Added pending documentation by @Mehulantony in https://github.com/oss-slu/oss_cicd_automation/pull/79\n* feat: ✨ LICENSE file added by @codefair-io[bot] in https://github.com/oss-slu/oss_cicd_automation/pull/83\n* feat: ✨ Update code metadata files by @codefair-io[bot] in https://github.com/oss-slu/oss_cicd_automation/pull/84\n\n## New Contributors\n* @Mehulantony made their first contribution in https://github.com/oss-slu/oss_cicd_automation/pull/5\n* @ImJustHenry made their first contribution in https://github.com/oss-slu/oss_cicd_automation/pull/4\n* @codefair-io[bot] made their first contribution in https://github.com/oss-slu/oss_cicd_automation/pull/38\n* @SrinivasaVarmaP made their first contribution in https://github.com/oss-slu/oss_cicd_automation/pull/55\n\n**Full Changelog**: https://github.com/oss-slu/oss_cicd_automation/commits/v1.0.0",
+  "version": "v1.0.0",
   "type": "SoftwareSourceCode"
 }
