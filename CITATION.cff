@@ -18,7 +18,7 @@ abstract: OSS CI/CD & Automation project provides continuous integration and
   management.
 keywords:
   - CI/CD
-license: NOASSERTION
+license: MIT-Modern-Variant
 repository-code: https://github.com/oss-slu/oss_cicd_automation
 date-released: 2026-03-20
 version: v2.0.1
