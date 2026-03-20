@@ -58,14 +58,9 @@
   "dateModified": "2026-03-20",
   "description": "OSS CI/CD & Automation project provides continuous integration and continuous deployment (CI/CD) services to open source projects developed at SLU, including automated testing, deployment pipelines, and release management.",
   "issueTracker": "https://github.com/oss-slu/oss_cicd_automation/issues",
-  "keywords": [
-    "CI/CD"
-  ],
-  "license": "https://spdx.org/licenses/MIT-Modern-Variant",
-  "programmingLanguage": [
-    "Python",
-    "YML"
-  ],
+  "keywords": ["CI/CD"],
+  "license": "NOASSERTION",
+  "programmingLanguage": ["Python", "YML"],
   "schema:releaseNotes": "Second Semester, 1 Milestone complete... CI Focused auditing/documentation. Made onboarding easier and made a OSS dashboard for better organization.",
   "version": "v2.0.0",
   "type": "SoftwareSourceCode"
