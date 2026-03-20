@@ -1,13 +1,13 @@
 title: oss_cicd_automation
 authors:
-  - given-names: "Srinivasa "
-    family-names: Varma
-    affiliation: Saint Louis University
   - given-names: Henry
     family-names: Wang
     affiliation: Saint Louis University
-  - given-names: Mehul
-    family-names: Antony
+  - given-names: Justin
+    family-names: Duong
+    affiliation: Saint Louis University
+  - given-names: Thomas
+    family-names: Pautler
     affiliation: Saint Louis University
 cff-version: 1.2.0
 message: If you use this software, please cite it using the metadata from this file.
@@ -20,4 +20,5 @@ keywords:
   - CI/CD
 license: MIT-Modern-Variant
 repository-code: https://github.com/oss-slu/oss_cicd_automation
-version: v1.0.0
+date-released: 2026-03-20
+version: v2.0.0
