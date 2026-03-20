@@ -1,8 +1,8 @@
 # OSS CI/CD Automation @ SLU
 
-This repository serves as a central hub for **CI/CD automation and operational tooling** supporting open source projects developed at **Saint Louis University (SLU)**.
+This repository serves as a central hub for CI/CD automation and operational tooling supporting open source projects developed at Saint Louis University (SLU).
 
-While created to support SLU-led initiatives, the resources in this repository are designed to be **reusable, adaptable, and beneficial to the broader open source community**.
+While created to support SLU-led initiatives, the resources in this repository are designed to be reusable, adaptable, and beneficial to the broader open source community.
 
 ---
 
@@ -26,11 +26,11 @@ Scripts and helper tools for automation, auditing, compliance checks, debugging,
 
 The primary goals of this repository are to:
 
-- Provide **standardized CI/CD pipelines** for Linux, Windows, and macOS environments  
-- Offer **reusable automation templates** to reduce setup time and duplication  
-- Supply **audit and compliance tooling** to support secure and reliable workflows  
-- Share practical knowledge through **documented case studies**  
-- Support SLU teams while contributing **open, maintainable CI/CD solutions** to the open source ecosystem
+- Provide standardized CI/CD pipelines for Linux, Windows, and macOS environments  
+- Offer reusable automation templates to reduce setup time and duplication  
+- Supply audit and compliance tooling to support secure and reliable workflows  
+- Share practical knowledge through documented case studies  
+- Support SLU teams while contributing open, maintainable CI/CD solutions to the open source ecosystem
 
 ---
 
