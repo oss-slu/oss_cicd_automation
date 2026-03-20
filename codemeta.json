@@ -62,6 +62,6 @@
   "license": "NOASSERTION",
   "programmingLanguage": ["Python", "YML"],
   "schema:releaseNotes": "Second Semester, 1 Milestone complete... CI Focused auditing/documentation. Made onboarding easier and made a OSS dashboard for better organization.",
-  "version": "v2.0.1",
+  "version": "v2.0.2",
   "type": "SoftwareSourceCode"
 }
