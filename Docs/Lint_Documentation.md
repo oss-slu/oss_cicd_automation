@@ -77,6 +77,60 @@ Exit codes:
 - `1` — unfixable issues remain, needs manual review
 - `2` — bad argument or path doesn't exist
 
+## Testing on a Real Repository
+
+Before integrating the script into a CI workflow, it was validated against a real open source project by forking and cloning a repository and running the script against it.
+
+### Test Environment
+
+| Detail | Value |
+|--------|-------|
+| Repository tested | pao_surgery_simulator |
+| Test directory | `C:\Users\user\pao_surgery_simulator_linting` |
+| Script path | `C:\Users\user\Downloads\oss_cicd_automation\Tools&Utilities\lint.py` |
+| Languages detected | JavaScript, Markdown, Python |
+
+### Test Procedure
+
+Run check-only first to review findings without making changes, then apply fixes and verify with git diff.
+```cmd
+# Step 1 — check only, no changes made
+python "C:\...\lint.py" --check-only -v
+
+# Step 2 — apply fixes
+python "C:\...\lint.py" -v
+
+# Step 3 — review what changed
+git diff
+
+# Step 4 — revert if needed
+git checkout .
+```
+
+### Test Output
+```
+[INFO] Detected: javascript, markdown, python
+[INFO] Running javascript...
+[WARNING] eslint not found, skipping JS/TS
+[WARNING] prettier not found, skipping JS/TS formatting
+[INFO] Running markdown...
+[WARNING] markdownlint-cli2 not found, skipping Markdown
+[INFO] Running python...
+F401 [*] `PIL.Image` imported but unused --> backend\app.py:7:17
+F401 [*] `flask.send_file` imported but unused --> backend\app.py:10:44
+F401 [*] `sqlalchemy.orm.declarative_base` imported but unused --> backend\db.py:3:42
+F401 [*] `models` imported but unused --> backend\db.py:7:8
+Found 4 errors. [*] 4 fixable with the `--fix` option.
+[FAIL] Unfixable issues in: python — needs manual review
+```
+### What the Test Confirmed
+
+- Auto-detection works correctly from file extensions
+- Missing tools are skipped gracefully — no crash, just a warning
+- `FAIL` on `--check-only` with all `[*]` errors is expected behavior, not a bug
+- Running without `--check-only` resolved all flagged Python issues automatically
+- `git diff` after fixing showed only the removed unused imports — no unintended changes
+
 ## Integrating into CI
 
 Add this step before your build or test steps. The script exits 1 on unfixable issues which fails the job, and silently fixes everything else.
