@@ -1,0 +1,38 @@
+name: Docker Build -  Backend (Local Test on CIVICKIT)
+
+on:
+  push:
+    branches: [ test/docker-ci ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install
+      - name: Generate Prisma Client
+        run: npx prisma generate
+      - name: Run tests
+        run: npm test
+
+  docker-build:
+    needs: test
+    uses: ./.github/workflows/docker-build-push.yml
+
+    with:
+      image_name: civickit-backend
+      dockerfile: backend/Dockerfile
+      context: backend
+
+    secrets:
+      GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
