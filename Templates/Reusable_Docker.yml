@@ -1,26 +1,20 @@
-name: Reusable_Docker.yml 
+name: Reusable - Docker Build and Push
 
 on:
   workflow_call:
     inputs:
       image_name:
-        description: 'Name of the Docker image (e.g. myapp-server)'
         required: true
         type: string
-
       dockerfile:
-        description: 'Path to the Dockerfile'
         required: true
         type: string
-
       context:
-        description: 'Build context directory'
         required: true
         type: string
 
     secrets:
       GHCR_TOKEN:
-        description: 'Token for GHCR authentication'
         required: true
 
 permissions:
@@ -45,7 +39,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Extract metadata (tags & labels)
+      - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -54,7 +48,7 @@ jobs:
             type=sha
             type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Build and push Docker image
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: ${{ inputs.context }}
