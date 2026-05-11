@@ -14,7 +14,7 @@ This document describes the Kubernetes deployment infrastructure created for the
 
 ## Background
 
-DigitalBoneBox is a Node.js web application consisting of two components: a static HTML/HTMX frontend served by `http-server`, and a backend Express API (`boneset-api`). Prior to this work, neither component had been containerized or configured for deployment to a Kubernetes cluster. The implementation follows the deployment patterns established by the `mdma` project in the `oss-slu/k8s-manifests` repository, including GHCR image hosting, `sha-` prefixed image tags, and the `ghcr-secret` image pull secret convention.
+DigitalBoneBox is a Node.js web application consisting of two components: a static HTML/HTMX frontend served by `http-server`, and a backend Express API (`boneset-api`). Prior to this work, neither component had been containerized or configured for deployment to a Kubernetes cluster.
 
 ---
 
@@ -29,8 +29,6 @@ Two Dockerfiles were created to containerize the application components.
 ---
 
 ## Kubernetes Manifests
-
-Two manifests were added to the `oss-slu/k8s-manifests` repository under a new `digitalbonebox/` directory, consistent with how `mdma/` is structured.
 
 **`frontend.yaml`** defines a Deployment running one replica of the frontend container and a ClusterIP Service exposing it on port 8080 within the cluster.
 
