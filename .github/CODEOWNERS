@@ -1,0 +1,5 @@
+# All files require approval from one of the following accounts
+* @kungfuchicken @ahmedbektic @
+
+# Protect CODEOWNERS file
+/.github/CODEOWNERS @kungfuchicken @ahmedbektic
