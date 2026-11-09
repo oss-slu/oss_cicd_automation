@@ -1,0 +1,16 @@
+name: Lint & Format Checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    uses: oss-slu/oss_cicd_automation/.github/workflows/reusable-lint.yml@main
+    with:
+      fail_on_error: false
+      python_version: "3.12"
+      node_version: "20"
+      go_version: "1.22"
