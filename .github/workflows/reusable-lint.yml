@@ -100,7 +100,12 @@ jobs:
           node-version: ${{ inputs.node_version }}
 
       - name: Install Dependencies
-        run: npm ci --ignore-scripts || npm install --package-lock-only --ignore-scripts
+        run: |
+          if [ -f "package-lock.json" ]; then
+            npm ci --ignore-scripts
+          else
+            npm install --ignore-scripts
+          fi
 
       - name: Run ESLint
         run: npm exec --no -- eslint .
