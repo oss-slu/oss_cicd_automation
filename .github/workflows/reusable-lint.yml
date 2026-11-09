@@ -100,21 +100,13 @@ jobs:
           node-version: ${{ inputs.node_version }}
 
       - name: Install Dependencies
-        run: |
-          if [ -f "package-lock.json" ]; then
-            npm ci --ignore-scripts
-          else
-            npm install --ignore-scripts
-          fi
+        run: npm ci --ignore-scripts || npm install --package-lock-only --ignore-scripts
 
-      - name: Run ESLint & Prettier
-        run: |
-          if npm run | grep -q "lint"; then
-            npm run lint
-          else
-            npx --no-install eslint@8.57.0 . || npx eslint@8.57.0 .
-          fi
-          npx --no-install prettier@3.2.5 --check . || npx prettier@3.2.5 --check .
+      - name: Run ESLint
+        run: npm exec --no -- eslint .
+
+      - name: Check Prettier Formatting
+        run: npm exec --no -- prettier --check .
 
   go-lint:
     name: Go Linting (golangci-lint)
