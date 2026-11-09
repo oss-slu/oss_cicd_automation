@@ -1,0 +1,136 @@
+name: Reusable Multi-Language Lint & Format
+
+on:
+  workflow_call:
+    inputs:
+      fail_on_error:
+        description: "Fail the workflow step when lint errors are found (default: false for advisory mode)"
+        type: boolean
+        required: false
+        default: false
+      python_version:
+        description: "Python version to set up"
+        type: string
+        required: false
+        default: "3.12"
+      node_version:
+        description: "Node.js version to set up"
+        type: string
+        required: false
+        default: "20"
+      go_version:
+        description: "Go version to set up"
+        type: string
+        required: false
+        default: "1.22"
+
+jobs:
+  detect:
+    name: Detect Repository Tech Stack
+    runs-on: ubuntu-latest
+    outputs:
+      has_python: ${{ steps.detect-stack.outputs.has_python }}
+      has_node: ${{ steps.detect-stack.outputs.has_node }}
+      has_go: ${{ steps.detect-stack.outputs.has_go }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Check for Stacks & Set Outputs
+        id: detect-stack
+        run: |
+          # Python Detection
+          if [ -f "pyproject.toml" ] || [ -f "requirements.txt" ] || [ -f "setup.py" ] || [ -n "$(find . -maxdepth 2 -name '*.py' -print -quit)" ]; then
+            echo "has_python=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_python=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Node/TypeScript Detection
+          if [ -f "package.json" ]; then
+            echo "has_node=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_node=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # Go Detection
+          if [ -f "go.mod" ]; then
+            echo "has_go=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_go=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  python-lint:
+    name: Python Linting & Formatting (Ruff)
+    needs: detect
+    if: needs.detect.outputs.has_python == 'true'
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ !inputs.fail_on_error }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python_version }}
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run Ruff Lint (with PR Annotations)
+        run: ruff check --output-format=github .
+
+      - name: Check Ruff Formatting
+        run: ruff format --check .
+
+  node-lint:
+    name: Node / TypeScript Linting & Formatting
+    needs: detect
+    if: needs.detect.outputs.has_node == 'true'
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ !inputs.fail_on_error }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Install Dependencies
+        run: |
+          if [ -f "package-lock.json" ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Run ESLint & Prettier
+        run: |
+          if npm run | grep -q "lint"; then
+            npm run lint
+          else
+            npx eslint .
+          fi
+          npx prettier --check .
+
+  go-lint:
+    name: Go Linting (golangci-lint)
+    needs: detect
+    if: needs.detect.outputs.has_go == 'true'
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ !inputs.fail_on_error }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ inputs.go_version }}
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        
