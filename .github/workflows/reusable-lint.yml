@@ -101,11 +101,10 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          if [ -f "package-lock.json" ]; then
-            npm ci --ignore-scripts
-          else
-            npm install --no-save --ignore-scripts
+          if [ ! -f "package-lock.json" ]; then
+            npm install --package-lock-only --ignore-scripts
           fi
+          npm ci --ignore-scripts
 
       - name: Run ESLint
         run: npm exec --no -- eslint .
