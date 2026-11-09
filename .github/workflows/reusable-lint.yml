@@ -34,7 +34,7 @@ jobs:
       has_go: ${{ steps.detect-stack.outputs.has_go }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Check for Stacks & Set Outputs
         id: detect-stack
@@ -68,10 +68,10 @@ jobs:
     continue-on-error: ${{ !inputs.fail_on_error }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@0b548d7bd9fa301966b700ce7231c5215f79bf58 # v5.3.0
         with:
           python-version: ${{ inputs.python_version }}
 
@@ -92,19 +92,19 @@ jobs:
     continue-on-error: ${{ !inputs.fail_on_error }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: ${{ inputs.node_version }}
 
       - name: Install Dependencies
         run: |
           if [ -f "package-lock.json" ]; then
-            npm ci
+            npm ci --ignore-scripts
           else
-            npm install
+            npm install --ignore-scripts
           fi
 
       - name: Run ESLint & Prettier
@@ -112,9 +112,9 @@ jobs:
           if npm run | grep -q "lint"; then
             npm run lint
           else
-            npx eslint .
+            npx --no-install eslint@8.57.0 . || npx eslint@8.57.0 .
           fi
-          npx prettier --check .
+          npx --no-install prettier@3.2.5 --check . || npx prettier@3.2.5 --check .
 
   go-lint:
     name: Go Linting (golangci-lint)
@@ -124,13 +124,12 @@ jobs:
     continue-on-error: ${{ !inputs.fail_on_error }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@41dfa104286548725115896d4d53d65264b26224 # v5.1.0
         with:
           go-version: ${{ inputs.go_version }}
 
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        
+        uses: golangci/golangci-lint-action@aaa42aa0628b4ae2578232a66b541047968fac86 # v6.1.1
