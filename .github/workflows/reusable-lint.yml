@@ -76,7 +76,7 @@ jobs:
           python-version: ${{ inputs.python_version }}
 
       - name: Install Ruff
-        run: pip install ruff
+        run: "pip install --only-binary=:all: ruff==0.3.4"
 
       - name: Run Ruff Lint (with PR Annotations)
         run: ruff check --output-format=github .
