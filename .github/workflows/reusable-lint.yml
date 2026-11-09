@@ -104,7 +104,7 @@ jobs:
           if [ -f "package-lock.json" ]; then
             npm ci --ignore-scripts
           else
-            npm install --ignore-scripts
+            npm install --no-save --ignore-scripts
           fi
 
       - name: Run ESLint
