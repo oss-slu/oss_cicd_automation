@@ -28,7 +28,7 @@ These templates ensure every workflow follows consistent standards for reliabili
   - `reusable-test.yml` → A base test workflow using reusable actions  
   - `deploy-template.yml` → Standardized deployment pipeline template  
   - `security/secret-scan-caller.yml` → Reusable workflow caller template for pre-merge Gitleaks secret detection.
-
+  - `link-check/reusable-link-check-caller.yml` → Reusable workflow caller template for automated Markdown link verification using Lychee (pre-merge internal relative-link checks and weekly external URL audits).
 ---
 
 ## 🧠 Usage

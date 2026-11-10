@@ -1,0 +1,63 @@
+name: Reusable Documentation Link Check
+
+on:
+  workflow_call:
+    inputs:
+      mode:
+        description: "internal = relative/local links only (offline); all = also check external URLs"
+        type: string
+        required: false
+        default: internal
+      fail-on-error:
+        description: "Fail the job when broken links are found"
+        type: boolean
+        required: false
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  link-check:
+    name: Lychee Link Check (${{ inputs.mode }})
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ !inputs.fail-on-error }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Restore / save Lychee response cache
+        if: inputs.mode == 'all'
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        with:
+          path: .lycheecache
+          key: cache-lychee-${{ github.run_id }}
+          restore-keys: cache-lychee-
+
+      # Internal mode: validate only local relative links & in-page anchors.
+      # --offline makes no network requests, so external URLs are skipped.
+      - name: Run Lychee (internal / offline)
+        if: inputs.mode == 'internal'
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --offline --no-progress './**/*.md'
+          fail: ${{ inputs.fail-on-error }}
+          failIfEmpty: false
+          format: markdown
+          output: lychee-report.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # All mode: also check external URLs, using the local response cache to
+      # reduce rate-limit pressure. Domains in .lycheeignore are skipped.
+      - name: Run Lychee (all / external)
+        if: inputs.mode == 'all'
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --cache --max-cache-age 1d --no-progress './**/*.md'
+          fail: ${{ inputs.fail-on-error }}
+          failIfEmpty: false
+          format: markdown
+          output: lychee-report.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
