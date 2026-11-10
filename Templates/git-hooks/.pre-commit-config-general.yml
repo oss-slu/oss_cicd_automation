@@ -11,16 +11,16 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
-      - id: trailing-whitespace       # strips trailing whitespace from all files
-      - id: end-of-file-fixer         # ensures every file ends with a newline
-      - id: mixed-line-ending         # normalises CRLF → LF
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
         args: [--fix=lf]
-      - id: check-merge-conflict      # blocks accidental merge-conflict markers
-      - id: check-added-large-files   # warns on files > 500 KB
+      - id: check-merge-conflict
+      - id: check-added-large-files
         args: [--maxkb=500]
-      - id: check-yaml                # validates YAML syntax
-      - id: check-json                # validates JSON syntax
-      - id: pretty-format-json        # auto-formats JSON (sorted keys, 2-space indent)
+      - id: check-yaml
+      - id: check-json
+      - id: pretty-format-json
         args: [--autofix, --indent=2]
 
   # Gitleaks — scans staged diff for secrets before every commit.
@@ -30,4 +30,3 @@ repos:
     rev: v8.30.1
     hooks:
       - id: gitleaks
-      

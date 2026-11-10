@@ -22,6 +22,6 @@ repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.17.4
     hooks:
-      - id: ruff                # linting — matches ruff check in CI
-        args: [--fix]           # auto-fix safe violations locally
-      - id: ruff-format         # formatting — matches ruff format in CI
+      - id: ruff-check           
+        args: [--fix]
+      - id: ruff-format
