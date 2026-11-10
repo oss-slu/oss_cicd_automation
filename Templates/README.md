@@ -27,6 +27,7 @@ These templates ensure every workflow follows consistent standards for reliabili
   For example:  
   - `reusable-test.yml` → A base test workflow using reusable actions  
   - `deploy-template.yml` → Standardized deployment pipeline template  
+  - `security/secret-scan-caller.yml` → Reusable workflow caller template for pre-merge Gitleaks secret detection.
 
 ---
 
