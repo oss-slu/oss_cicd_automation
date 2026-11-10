@@ -1,0 +1,40 @@
+# JavaScript / TypeScript pre-commit hooks.
+# Uses ESLint (via mirrors-eslint) and Prettier (via local node_modules).
+#
+# Prerequisites:
+#   npm install --save-dev prettier eslint
+#
+# Usage:
+#   pip install pre-commit
+#   cp .pre-commit-config-js-ts.yml .pre-commit-config.yml
+#   pre-commit install
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-json
+
+  # ESLint — actively mirrored, pinned to latest stable tag
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v10.14.0
+    hooks:
+      - id: eslint
+        files: \.[jt]sx?$          # matches .js .jsx .ts .tsx
+        types: [file]
+        additional_dependencies:
+          - eslint@10.14.0
+
+  # Prettier — local hook (mirrors-prettier is archived since Apr 2024;
+  # the Prettier project recommends running it from your local node_modules)
+  - repo: local
+    hooks:
+      - id: prettier
+        name: prettier
+        entry: npx prettier --write --ignore-unknown
+        language: node
+        types_or: [javascript, jsx, ts, tsx, json, css, markdown, yaml]
+        pass_filenames: true

@@ -1,0 +1,27 @@
+# Python-specific pre-commit hooks using Ruff (linter + formatter).
+# Ruff replaces flake8, isort, and black in a single fast tool.
+#
+# Usage:
+#   pip install pre-commit
+#   cp .pre-commit-config-python.yml .pre-commit-config.yml
+#   pre-commit install
+#
+# To combine with general hygiene hooks, merge the `repos` lists from
+# .pre-commit-config-general.yml and this file into one .pre-commit-config.yml.
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.4
+    hooks:
+      - id: ruff                # linting — matches ruff check in CI
+        args: [--fix]           # auto-fix safe violations locally
+      - id: ruff-format         # formatting — matches ruff format in CI
