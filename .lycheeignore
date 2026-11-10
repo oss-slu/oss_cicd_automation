@@ -1,0 +1,19 @@
+# .lycheeignore — domains excluded from the weekly external link audit.
+# Each line is a regular expression matched against the FULL URL (including
+# the scheme). Use ^https?:// to anchor a domain. Comments start with #.
+# These domains are skipped because they rate-limit, require auth, or sit
+# behind SSO / Cloudflare bot protection that produces false positives.
+
+# GitHub raw content endpoints (rate-limited without authentication)
+^https?://raw\.githubusercontent\.com
+
+# GitHub REST API (rate-limited; not browsable pages)
+^https?://api\.github\.com
+
+# SonarCloud (requires authentication)
+^https?://sonarcloud\.io
+^https?://.*\.sonarcloud\.io
+
+# SLU portals protected by SSO / Cloudflare bot protection
+^https?://.*\.slu\.edu
+^https?://slu\.edu

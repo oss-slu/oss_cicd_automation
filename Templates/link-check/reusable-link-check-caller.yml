@@ -1,0 +1,31 @@
+name: Documentation Link Check
+
+on:
+  pull_request:
+    paths:
+      - '**/*.md'
+  schedule:
+    - cron: '0 6 * * 1'   # every Monday at 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  internal:
+    name: Internal Link Check (PR)
+    if: github.event_name == 'pull_request'
+    uses: ./.github/workflows/reusable-link-check.yml
+    with:
+      mode: internal
+      fail-on-error: true
+    secrets: inherit
+
+  external:
+    name: External Link Audit (Weekly)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/reusable-link-check.yml
+    with:
+      mode: all
+      fail-on-error: false
+    secrets: inherit
