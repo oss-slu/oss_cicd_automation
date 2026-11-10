@@ -1,0 +1,47 @@
+# Caller template for automated PR size and component labeling.
+# Copy this into your repository's .github/workflows/ directory.
+#
+# Prerequisites:
+#   - Create the labels listed below in your repository's Labels settings page
+#     before running this workflow, otherwise the action will error.
+#   - Copy Templates/labeler/labeler.yml to .github/labeler.yml and customize
+#     the path globs to match your repository structure.
+
+name: PR Labeler
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # Path-based area labels — uses .github/labeler.yml for glob configuration
+  area-labeler:
+    name: Apply Area Labels
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply area labels based on changed paths
+        uses: actions/labeler@bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13 # v7.0.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/labeler.yml
+          sync-labels: true   # removes stale area labels when files are reverted
+
+  # Size labels — based on total lines added + deleted
+  size-labeler:
+    name: Apply Size Label
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply size label based on line count
+        uses: codelytv/pr-size-labeler@19c335e7695ba922de938806dd129f0a9b992644 # v1.12.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          xs_max_size: 10      # size/XS  → 0–10 lines
+          s_max_size:  50      # size/S   → 11–50 lines
+          m_max_size:  200     # size/M   → 51–200 lines
+          l_max_size:  500     # size/L   → 201–500 lines
+                               # size/XL  → 500+ lines
+          fail_if_xl: false    # never block a PR, just label it

@@ -1,0 +1,46 @@
+# Path-based PR area label configuration for actions/labeler.
+# Copy this file to .github/labeler.yml in your repository and adjust
+# the globs to match your project structure.
+#
+# Docs: https://github.com/actions/labeler
+
+# Matches changes inside any frontend-related directory
+area/frontend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/frontend/**'
+      - 'frontend/**'
+      - 'client/**'
+      - '**/*.css'
+      - '**/*.scss'
+      - '**/*.html'
+
+# Matches changes inside any backend-related directory
+area/backend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'src/backend/**'
+      - 'backend/**'
+      - 'server/**'
+      - 'api/**'
+
+# Matches changes to any documentation file
+area/docs:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'Docs/**'
+      - 'docs/**'
+      - '**/*.md'
+      - '**/*.rst'
+
+# Matches changes to CI/CD workflows, configs, and tooling
+area/ci:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/**'
+      - 'Templates/**'
+      - '.pre-commit-config.yaml'
+      - '.pre-commit-config.yml'
+      - 'Makefile'
+      - 'Dockerfile'
+      - '**/*.dockerfile'

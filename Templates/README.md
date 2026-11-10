@@ -29,6 +29,9 @@ These templates ensure every workflow follows consistent standards for reliabili
   - `deploy-template.yml` → Standardized deployment pipeline template  
   - `security/secret-scan-caller.yml` → Reusable workflow caller template for pre-merge Gitleaks secret detection.
   - `link-check/reusable-link-check-caller.yml` → Reusable workflow caller template for automated Markdown link verification using Lychee (pre-merge internal relative-link checks and weekly external URL audits).
+  - `labeler/pr-labeler-caller.yml` → Caller workflow template for automated PR size labeling (`size/XS` through `size/XL`) and path-based area labeling (`area/frontend`, `area/backend`, `area/docs`, `area/ci`).
+  - `labeler/labeler.yml` → Sample path-based label configuration for `actions/labeler`; copy to `.github/labeler.yml` and customize globs to match your repository structure.
+
 ---
 
 ## 🧠 Usage
