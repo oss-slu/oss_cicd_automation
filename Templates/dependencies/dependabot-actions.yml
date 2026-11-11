@@ -28,4 +28,3 @@ updates:
           - minor
           - patch
         dependency-type: production
-        

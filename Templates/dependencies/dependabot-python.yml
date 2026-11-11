@@ -27,7 +27,6 @@ updates:
           - minor
           - patch
         dependency-type: production
-    versioning-strategy: widen
 
   # --- poetry (pyproject.toml + poetry.lock) ---
   # Uncomment if you use Poetry:
