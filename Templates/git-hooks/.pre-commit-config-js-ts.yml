@@ -1,0 +1,36 @@
+# JavaScript / TypeScript pre-commit hooks.
+# Uses ESLint and Prettier via local node_modules (language: system).
+# This avoids nodeenv provisioning errors on Windows and matches the CI setup.
+#
+# Prerequisites:
+#   npm install --save-dev prettier eslint
+#
+# Usage:
+#   pip install pre-commit
+#   cp .pre-commit-config-js-ts.yml .pre-commit-config.yml
+#   pre-commit install
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-json
+
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: npx eslint --fix
+        language: system
+        files: \.[jt]sx?$        
+        pass_filenames: true
+
+      - id: prettier
+        name: prettier
+        entry: npx prettier --write --ignore-unknown
+        language: system
+        types_or: [javascript, jsx, ts, tsx, json, css, markdown, yaml]
+        pass_filenames: true

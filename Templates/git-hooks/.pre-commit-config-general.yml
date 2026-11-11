@@ -1,0 +1,32 @@
+# General repository hygiene pre-commit hooks.
+# Covers trailing whitespace, end-of-file newlines, and YAML/JSON validation.
+# and Gitleaks secret scanning — suitable as a base for any repo.
+#
+# Usage:
+#   pip install pre-commit
+#   cp .pre-commit-config-general.yml .pre-commit-config.yml
+#   pre-commit install
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=500]
+      - id: check-yaml
+      - id: check-json
+      - id: pretty-format-json
+        args: [--autofix, --indent=2]
+
+  # Gitleaks — scans staged diff for secrets before every commit.
+  # Included in the base config so every project gets secret checking out of the box.
+  # To suppress a false positive, add the line's SHA to .gitleaksignore.
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks

@@ -1,0 +1,32 @@
+# Rust pre-commit hooks.
+# Uses cargo fmt (formatting) and cargo clippy (linting) from the local toolchain.
+# Requires Rust and Cargo to be installed: https://rustup.rs
+#
+# Usage:
+#   pip install pre-commit
+#   cp .pre-commit-config-rust.yml .pre-commit-config.yml
+#   pre-commit install
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+
+  - repo: local
+    hooks:
+      - id: cargo-fmt
+        name: cargo fmt
+        entry: cargo fmt --all --
+        language: system
+        types: [rust]
+        pass_filenames: false
+
+      - id: cargo-clippy
+        name: cargo clippy
+        entry: cargo clippy --all-targets --all-features -- -D warnings
+        language: system
+        types: [rust]
+        pass_filenames: false
