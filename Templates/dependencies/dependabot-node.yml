@@ -1,0 +1,63 @@
+# Dependabot configuration for Node.js dependency updates.
+# Drop this into .github/dependabot.yml in your repository.
+#
+# Supports npm, yarn, pnpm. Copy the section matching your package manager.
+# This config groups minor + patch updates to reduce PR noise.
+#
+# Usage:
+#   Copy this file to .github/dependabot.yml in your target repository.
+#   Uncomment the section for your package manager (npm / yarn / pnpm).
+
+version: 2
+updates:
+  # --- npm (package.json + package-lock.json) ---
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: UTC
+    open-pull-requests-limit: 10
+    groups:
+      node-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+        dependency-type: production
+    versioning-strategy: widen
+
+  # --- yarn (package.json + yarn.lock) ---
+  # Uncomment if you use Yarn:
+  # - package-ecosystem: npm
+  #   directory: /
+  #   schedule:
+  #     interval: weekly
+  #     day: monday
+  #   open-pull-requests-limit: 10
+  #   groups:
+  #     node-minor-patch:
+  #       patterns:
+  #         - "*"
+  #       update-types:
+  #         - minor
+  #         - patch
+
+  # --- pnpm (package.json + pnpm-lock.yaml) ---
+  # Uncomment if you use pnpm:
+  # - package-ecosystem: npm
+  #   directory: /
+  #   schedule:
+  #     interval: weekly
+  #     day: monday
+  #   open-pull-requests-limit: 10
+  #   groups:
+  #     node-minor-patch:
+  #       patterns:
+  #         - "*"
+  #       update-types:
+  #         - minor
+  #         - patch
+  

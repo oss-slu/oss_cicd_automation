@@ -11,6 +11,7 @@ This folder contains written documentation related to the CI/CD work completed t
 - **[Kaniko Dockerfile Optimization Guide](Kaniko_Dockerfile_Optimization_Guide.md)** – Technical guide detailing Docker/BuildKit vs. Kaniko execution mechanisms, linear hierarchy rules, and multi-stage container optimization for in-cluster builds.
 - **[Documentation Link Verification Workflow](Link_Checking_Workflow.md)** – Guide to the automated Lychee link-check CI routine: internal PR checks, the weekly external audit, and `.lycheeignore` conventions.
 - **[Pre-Commit Hook Setup Guide](Pre_Commit_Setup_Guide.md)** – Instructions for installing and enabling the standardized pre-commit hook templates, skipping hooks with `--no-verify`, and troubleshooting common issues.
+- **[Automated Dependency Updates Guide](Automated_Dependency_Updates.md)** – Instructions for adopting Dependabot configuration templates, understanding grouping rules, and setting up auto-merge strategies.
 
 All documentation is written to support long-term maintainability, knowledge transfer, and onboarding for future contributors.
 

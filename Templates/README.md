@@ -33,6 +33,10 @@ These templates ensure every workflow follows consistent standards for reliabili
   - `git-hooks/.pre-commit-config-python.yml` → Drop-in pre-commit template for Python repos using Ruff (linter + formatter).
   - `git-hooks/.pre-commit-config-js-ts.yml` → Drop-in pre-commit template for JavaScript/TypeScript repos using ESLint and Prettier.
   - `git-hooks/.pre-commit-config-rust.yml` → Drop-in pre-commit template for Rust repos using cargo fmt and cargo clippy.
+  - `dependencies/dependabot-actions.yml` → Drop-in Dependabot template for GitHub Actions updates, grouped by minor+patch to reduce PR noise.
+  - `dependencies/dependabot-python.yml` → Drop-in Dependabot template for Python (pip/poetry/uv) dependency updates with grouping configuration.
+  - `dependencies/dependabot-node.yml` → Drop-in Dependabot template for Node.js (npm/yarn/pnpm) dependency updates with grouping configuration.
+  - `dependencies/dependabot-docker.yml` → Drop-in Dependabot template for Docker base image updates.
 
 ---
 

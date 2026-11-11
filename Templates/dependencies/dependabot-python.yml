@@ -1,0 +1,63 @@
+# Dependabot configuration for Python dependency updates.
+# Drop this into .github/dependabot.yml in your repository.
+#
+# Supports pip, poetry, uv. Copy the section matching your package manager.
+# This config groups minor + patch updates to reduce PR noise.
+#
+# Usage:
+#   Copy this file to .github/dependabot.yml in your target repository.
+#   Uncomment the section for your package manager (pip / poetry / uv).
+
+version: 2
+updates:
+  # --- pip (requirements.txt, setup.py, pyproject.toml) ---
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: UTC
+    open-pull-requests-limit: 10
+    groups:
+      python-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+        dependency-type: production
+    versioning-strategy: widen
+
+  # --- poetry (pyproject.toml + poetry.lock) ---
+  # Uncomment if you use Poetry:
+  # - package-ecosystem: pip
+  #   directory: /
+  #   schedule:
+  #     interval: weekly
+  #     day: monday
+  #   open-pull-requests-limit: 10
+  #   groups:
+  #     python-minor-patch:
+  #       patterns:
+  #         - "*"
+  #       update-types:
+  #         - minor
+  #         - patch
+
+  # --- uv (pyproject.toml + uv.lock) ---
+  # Uncomment if you use UV:
+  # - package-ecosystem: pip
+  #   directory: /
+  #   schedule:
+  #     interval: weekly
+  #     day: monday
+  #   open-pull-requests-limit: 10
+  #   groups:
+  #     python-minor-patch:
+  #       patterns:
+  #         - "*"
+  #       update-types:
+  #         - minor
+  #         - patch
+  
