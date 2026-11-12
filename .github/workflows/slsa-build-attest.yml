@@ -1,0 +1,130 @@
+name: Reusable - SLSA Level 3 Build & Provenance Attestation
+
+on:
+  workflow_call:
+    inputs:
+      image-name:
+        description: "Target image name (e.g. ghcr.io/oss-slu/oss_dev_analytics)"
+        required: true
+        type: string
+      context:
+        description: "Docker build context directory"
+        required: false
+        type: string
+        default: "."
+      file:
+        description: "Path to Dockerfile"
+        required: false
+        type: string
+        default: "Dockerfile"
+      target:
+        description: "Build target stage"
+        required: false
+        type: string
+        default: ""
+      build-args:
+        description: "Build-time arguments passed to Docker build (multiline string)"
+        required: false
+        type: string
+        default: ""
+      platforms:
+        description: "Target architecture platforms (e.g. linux/amd64)"
+        required: false
+        type: string
+        default: "linux/amd64"
+      push:
+        description: "Whether to push the image to the registry"
+        required: false
+        type: boolean
+        default: true
+      runner:
+        description: "GitHub-hosted runner OS (must be isolated ephemeral runner for SLSA L3 compliance)"
+        required: false
+        type: string
+        default: "ubuntu-latest"
+      registry:
+        description: "Container registry host"
+        required: false
+        type: string
+        default: "ghcr.io"
+      tags:
+        description: "Additional tags specification for docker/metadata-action (multiline string)"
+        required: false
+        type: string
+        default: ""
+    outputs:
+      image-digest:
+        description: "The immutable sha256 digest of the built container image"
+        value: ${{ jobs.build-and-attest.outputs.image-digest }}
+      image-ref:
+        description: "The fully qualified image reference including sha256 digest"
+        value: ${{ jobs.build-and-attest.outputs.image-ref }}
+      attestation-url:
+        description: "The URL of the generated SLSA provenance attestation"
+        value: ${{ jobs.build-and-attest.outputs.attestation-url }}
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  attestations: write
+
+jobs:
+  build-and-attest:
+    name: Build & Attest SLSA L3 Artifact
+    runs-on: ${{ inputs.runner }}
+    outputs:
+      image-digest: ${{ steps.build.outputs.digest }}
+      image-ref: ${{ inputs.image-name }}@${{ steps.build.outputs.digest }}
+      attestation-url: ${{ steps.attest.outputs.attestation-url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
+
+      - name: Log in to Registry
+        if: ${{ inputs.push }}
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+        with:
+          registry: ${{ inputs.registry }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96 # v5.6.1
+        with:
+          images: ${{ inputs.image-name }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=sha,format=long
+            type=raw,value=latest,enable={{is_default_branch}}
+            ${{ inputs.tags }}
+
+      - name: Build and push container image
+        id: build
+        uses: docker/build-push-action@0adf9959216b96bec444f325f1e493d4aa344497 # v6.14.0
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.file }}
+          target: ${{ inputs.target != '' && inputs.target || '' }}
+          build-args: ${{ inputs.build-args }}
+          platforms: ${{ inputs.platforms }}
+          push: ${{ inputs.push }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Attest SLSA Build Level 3 Provenance
+        id: attest
+        if: ${{ inputs.push }}
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
+        with:
+          subject-name: ${{ inputs.image-name }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
