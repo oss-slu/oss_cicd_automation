@@ -1,0 +1,30 @@
+# Dependabot configuration for GitHub Actions version updates.
+# Drop this into .github/dependabot.yml in your repository.
+#
+# This config:
+#   - Checks for action updates weekly (every Monday)
+#   - Groups minor + patch updates into a single PR to reduce noise
+#   - Major version updates still get their own PR (requires intentional review)
+#
+# Usage:
+#   Copy this file to .github/dependabot.yml in your target repository.
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: UTC
+    open-pull-requests-limit: 10
+    groups:
+      # Bundle all minor + patch updates into one PR per week
+      action-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+        dependency-type: production

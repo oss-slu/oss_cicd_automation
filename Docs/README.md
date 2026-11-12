@@ -12,6 +12,7 @@ This folder contains written documentation related to the CI/CD work completed t
 - **[Documentation Link Verification Workflow](Link_Checking_Workflow.md)** – Guide to the automated Lychee link-check CI routine: internal PR checks, the weekly external audit, and `.lycheeignore` conventions.
 - **[Pre-Commit Hook Setup Guide](Pre_Commit_Setup_Guide.md)** – Instructions for installing and enabling the standardized pre-commit hook templates, skipping hooks with `--no-verify`, and troubleshooting common issues.
 - **[SLSA Build Level 3 Reusable Attestation Workflow](SLSA_Build_Attestation_Workflow.md)** – Reusable GitHub Actions workflow for building OCI images and generating non-falsifiable cryptographic build provenance signed with Sigstore OIDC.
+- **[Automated Dependency Updates Guide](Automated_Dependency_Updates_Guide.md)** – Instructions for adopting Dependabot configuration templates, understanding grouping rules, and setting up auto-merge strategies.
 - **[PR Size and Component Labeler Guide](PR_Labeler_Guide.md)** – Instructions for adopting the automated PR size and area labeling workflow, customizing label thresholds, and configuring path-based component rules.
 
 All documentation is written to support long-term maintainability, knowledge transfer, and onboarding for future contributors.

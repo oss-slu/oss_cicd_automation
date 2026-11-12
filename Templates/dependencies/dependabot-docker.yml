@@ -1,0 +1,27 @@
+# Dependabot configuration for Docker base image updates.
+# Drop this into .github/dependabot.yml in your repository.
+#
+# Checks for updates to base images referenced in Dockerfiles.
+# Groups minor + patch updates into a single PR per week.
+#
+# Usage:
+#   Copy this file to .github/dependabot.yml in your target repository.
+
+version: 2
+updates:
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: UTC
+    open-pull-requests-limit: 5
+    groups:
+      docker-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+        dependency-type: production
