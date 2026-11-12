@@ -28,11 +28,14 @@ These templates ensure every workflow follows consistent standards for reliabili
   - `reusable-test.yml` → A base test workflow using reusable actions  
   - `deploy-template.yml` → Standardized deployment pipeline template  
   - `security/secret-scan-caller.yml` → Reusable workflow caller template for pre-merge Gitleaks secret detection.
-  - `link-check/reusable-link-check-caller.yml` → Reusable workflow caller template for automated Markdown link verification using Lychee (pre-merge internal relative-link checks and weekly external URL audits).    
+  - `link-check/reusable-link-check-caller.yml` → Reusable workflow caller template for automated Markdown link verification using Lychee (pre-merge internal relative-link checks and weekly external URL audits). 
   - `git-hooks/.pre-commit-config-general.yml` → Drop-in pre-commit base template for repo hygiene and Gitleaks secret scanning — suitable for any repo.
   - `git-hooks/.pre-commit-config-python.yml` → Drop-in pre-commit template for Python repos using Ruff (linter + formatter).
   - `git-hooks/.pre-commit-config-js-ts.yml` → Drop-in pre-commit template for JavaScript/TypeScript repos using ESLint and Prettier.
   - `git-hooks/.pre-commit-config-rust.yml` → Drop-in pre-commit template for Rust repos using cargo fmt and cargo clippy.
+  - `labeler/labeler.yml` → Sample path-based label configuration for `actions/labeler`; copy to `.github/labeler.yml` and customize globs to match your repository structure.
+  - `labeler/pr-labeler-caller.yml` → Caller workflow template for automated PR size labeling (`size/XS` through `size/XL`) and path-based area labeling (`area/frontend`, `area/backend`, `area/docs`, `area/ci`).
+
 
 ---
 
