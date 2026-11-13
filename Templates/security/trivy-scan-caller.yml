@@ -1,3 +1,18 @@
+# ==============================================================================
+# DEPRECATED / LEGACY STANDALONE TRIVY CALLER TEMPLATE
+# ==============================================================================
+# NOTE: For standard deployed container applications in OSS-SLU, this standalone
+# Trivy scan caller is deprecated in favor of our unified SLSA Level 3 workflow:
+#   `Templates/build-attest/slsa-build-attest-caller.yml`
+# which automatically performs isolated container builds, generates Syft SBOMs,
+# signs SLSA Level 3 provenance attestations, dual-pushes to GHCR and Harbor,
+# and polls Harbor's built-in Trivy scanner to post reports directly into
+# the GitHub Actions Step Summary.
+#
+# Use this standalone workflow only for non-deployed repos or projects that do
+# not push to the Harbor container registry.
+# ==============================================================================
+
 name: Container Vulnerability Scan
 
 on:
