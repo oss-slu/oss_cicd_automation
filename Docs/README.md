@@ -14,6 +14,7 @@ This folder contains written documentation related to the CI/CD work completed t
 - **[SLSA Build Level 3 Reusable Attestation Workflow](SLSA_Build_Attestation_Workflow.md)** – Reusable GitHub Actions workflow for building OCI images and generating non-falsifiable cryptographic build provenance signed with Sigstore OIDC.
 - **[Automated Dependency Updates Guide](Automated_Dependency_Updates_Guide.md)** – Instructions for adopting Dependabot configuration templates, understanding grouping rules, and setting up auto-merge strategies.
 - **[PR Size and Component Labeler Guide](PR_Labeler_Guide.md)** – Instructions for adopting the automated PR size and area labeling workflow, customizing label thresholds, and configuring path-based component rules.
+- **[Container Vulnerability Scanning with Trivy](Trivy_Vulnerability_Scanning.md)** — Guide for integrating Trivy container scanning, interpreting CVE reports, and remediating vulnerable base images.
 
 All documentation is written to support long-term maintainability, knowledge transfer, and onboarding for future contributors.
 

@@ -1,0 +1,49 @@
+name: Container Vulnerability Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-scan:
+    name: Build Image for Scanning
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.meta.outputs.image_tag }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set image metadata
+        id: meta
+        run: |
+          IMAGE_TAG="local/${{ github.event.repository.name }}:${{ github.sha }}"
+          echo "image_tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Build container image
+        run: |
+          docker build -t "${{ steps.meta.outputs.image_tag }}" .
+
+      # If calling the reusable workflow across separate jobs, push to a staging
+      # registry or save/load the image artifact. For direct registry images:
+      # image-ref: "harbor.example.org/project/app:${{ github.sha }}"
+
+  trivy-scan:
+    name: Scan Container Image
+    uses: oss-slu/oss_cicd_automation/.github/workflows/reusable-trivy-scan.yml@main
+    with:
+      # Replace with your registry image reference (e.g., Harbor tag or Docker Hub image)
+      image-ref: "ghcr.io/${{ github.repository }}:${{ github.sha }}"
+      severity: "CRITICAL,HIGH"
+      fail-on-vuln: true
+      format: "table" # Change to 'sarif' to publish alerts to the GitHub Security tab
+    permissions:
+      contents: read
+      security-events: write # Needed only if format is set to 'sarif'

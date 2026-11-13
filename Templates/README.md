@@ -44,7 +44,7 @@ These templates ensure every workflow follows consistent standards for reliabili
   - `testing/coverage-python-caller.yml` → Caller template for Python pytest-cov coverage reporting and PR comment posting.
   - `testing/coverage-jest-caller.yml` → Caller template for Jest/Node.js lcov coverage reporting and PR comment posting.
   - `testing/coverage-go-caller.yml` → Caller template for Go coverage reporting and PR comment posting.
-
+  - `security/trivy-scan-caller.yml` → Caller template that scans container images for OS and application CVEs using Trivy prior to registry push or deployment
 
 ---
 

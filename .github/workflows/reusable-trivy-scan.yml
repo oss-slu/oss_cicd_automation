@@ -1,0 +1,75 @@
+name: Reusable Trivy Container Vulnerability Scan
+
+on:
+  workflow_call:
+    inputs:
+      image-ref:
+        description: "Target container image name and tag (or digest) to inspect"
+        required: true
+        type: string
+      severity:
+        description: "Comma-separated list of severity levels to flag (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)"
+        required: false
+        default: "CRITICAL,HIGH"
+        type: string
+      fail-on-vuln:
+        description: "Fail the workflow if vulnerabilities matching the severity threshold are found"
+        required: false
+        default: true
+        type: boolean
+      format:
+        description: "Scan output format ('table' for console logs, 'sarif' for GitHub Code Scanning)"
+        required: false
+        default: "table"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  trivy-container-scan:
+    name: Trivy Container Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Required only when format == 'sarif' to upload results to the Security tab
+      security-events: write
+
+    steps:
+      - name: Validate format input
+        run: |
+          if [[ "${{ inputs.format }}" != "table" && "${{ inputs.format }}" != "sarif" ]]; then
+            echo "::error::Invalid format '${{ inputs.format }}'. Supported values are 'table' or 'sarif'."
+            exit 1
+          fi
+
+      - name: Run Trivy vulnerability scanner (Table output)
+        if: ${{ inputs.format == 'table' }}
+        # Pin to the latest immutable commit SHA of aquasecurity/trivy-action (e.g., v0.35.0)
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984f69cba8f19 # v0.35.0
+        with:
+          scan-type: "image"
+          image-ref: ${{ inputs.image-ref }}
+          format: "table"
+          exit-code: ${{ inputs.fail-on-vuln && '1' || '0' }}
+          ignore-unfixed: false
+          severity: ${{ inputs.severity }}
+
+      - name: Run Trivy vulnerability scanner (SARIF output)
+        if: ${{ inputs.format == 'sarif' }}
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984f69cba8f19 # v0.35.0
+        with:
+          scan-type: "image"
+          image-ref: ${{ inputs.image-ref }}
+          format: "sarif"
+          output: "trivy-results.sarif"
+          exit-code: ${{ inputs.fail-on-vuln && '1' || '0' }}
+          ignore-unfixed: false
+          severity: ${{ inputs.severity }}
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        if: ${{ always() && inputs.format == 'sarif' }}
+        # Pin to the latest immutable commit SHA of github/codeql-action/upload-sarif
+        uses: github/codeql-action/upload-sarif@2d92b76c45b91eb80fc44c74ce3fce0ee94e8f9d # v3.28.0
+        with:
+          sarif_file: "trivy-results.sarif"
