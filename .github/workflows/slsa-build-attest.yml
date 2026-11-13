@@ -1,4 +1,4 @@
-name: Reusable - SLSA Level 3 Build & Provenance Attestation
+name: Reusable - SLSA Level 3 Build, SBOM & Provenance Attestation
 
 on:
   workflow_call:
@@ -52,6 +52,31 @@ on:
         required: false
         type: string
         default: ""
+      generate-sbom:
+        description: "Whether to generate an SPDX Software Bill of Materials (SBOM)"
+        required: false
+        type: boolean
+        default: true
+      sbom-format:
+        description: "SBOM specification format (e.g. spdx-json, cyclonedx-json)"
+        required: false
+        type: string
+        default: "spdx-json"
+      sbom-artifact-name:
+        description: "Custom name for the uploaded SBOM artifact"
+        required: false
+        type: string
+        default: ""
+      attest-provenance:
+        description: "Whether to attest SLSA Build Level 3 provenance"
+        required: false
+        type: boolean
+        default: true
+      attest-sbom:
+        description: "Whether to cryptographically attest the generated SBOM"
+        required: false
+        type: boolean
+        default: true
     outputs:
       image-digest:
         description: "The immutable sha256 digest of the built container image"
@@ -62,6 +87,12 @@ on:
       attestation-url:
         description: "The URL of the generated SLSA provenance attestation"
         value: ${{ jobs.build-and-attest.outputs.attestation-url }}
+      sbom-attestation-url:
+        description: "The URL of the generated SBOM attestation"
+        value: ${{ jobs.build-and-attest.outputs.sbom-attestation-url }}
+      sbom-digest:
+        description: "SHA256 digest of the generated SBOM"
+        value: ${{ jobs.build-and-attest.outputs.sbom-digest }}
 
 permissions:
   contents: read
@@ -71,12 +102,14 @@ permissions:
 
 jobs:
   build-and-attest:
-    name: Build & Attest SLSA L3 Artifact
+    name: Build, SBOM & Attest SLSA L3 Artifact
     runs-on: ${{ inputs.runner }}
     outputs:
       image-digest: ${{ steps.build.outputs.digest }}
       image-ref: ${{ inputs.image-name }}@${{ steps.build.outputs.digest }}
       attestation-url: ${{ steps.attest.outputs.attestation-url }}
+      sbom-attestation-url: ${{ steps.attest-sbom.outputs.attestation-url }}
+      sbom-digest: ${{ steps.sbom-hash.outputs.digest }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -120,9 +153,45 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Generate SBOM (Anchore Syft)
+        id: sbom
+        if: ${{ inputs.push && inputs.generate-sbom }}
+        uses: anchore/sbom-action@fc46e475199650a8ae6673bfad24ecb94a0fa848 # v0.18.0
+        with:
+          image: ${{ inputs.image-name }}@${{ steps.build.outputs.digest }}
+          format: ${{ inputs.sbom-format }}
+          output-file: ${{ runner.temp }}/sbom.spdx.json
+          upload-artifact: false
+
+      - name: Calculate SBOM Digest
+        id: sbom-hash
+        if: ${{ inputs.push && inputs.generate-sbom }}
+        shell: bash
+        run: |
+          DIGEST=$(sha256sum "${{ runner.temp }}/sbom.spdx.json" | awk '{print $1}')
+          echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+
+      - name: Upload SBOM Artifact
+        if: ${{ inputs.push && inputs.generate-sbom }}
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb99ba841c # v4.6.1
+        with:
+          name: ${{ inputs.sbom-artifact-name != '' && inputs.sbom-artifact-name || format('{0}-sbom', steps.meta.outputs.version) }}
+          path: ${{ runner.temp }}/sbom.spdx.json
+          if-no-files-found: error
+
+      - name: Attest SBOM
+        id: attest-sbom
+        if: ${{ inputs.push && inputs.generate-sbom && inputs.attest-sbom }}
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-name: ${{ inputs.image-name }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          sbom-path: ${{ runner.temp }}/sbom.spdx.json
+          push-to-registry: true
+
       - name: Attest SLSA Build Level 3 Provenance
         id: attest
-        if: ${{ inputs.push }}
+        if: ${{ inputs.push && inputs.attest-provenance }}
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
         with:
           subject-name: ${{ inputs.image-name }}

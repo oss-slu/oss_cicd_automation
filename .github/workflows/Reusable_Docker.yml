@@ -1,21 +1,43 @@
-name: Reusable - Docker Build and Push
+name: Reusable - Docker Build, SBOM & Attestation
 
 on:
   workflow_call:
     inputs:
+      registry:
+        description: "Target container registry host (e.g. ghcr.io or registry.oss-slu.online)"
+        required: false
+        type: string
+        default: "ghcr.io"
       image_name:
+        description: "Target repository/image name"
         required: true
         type: string
       dockerfile:
-        required: true
+        description: "Path to Dockerfile"
+        required: false
         type: string
+        default: "./Dockerfile"
       context:
-        required: true
+        description: "Docker build context"
+        required: false
         type: string
+        default: "."
+      generate_sbom:
+        description: "Whether to generate Syft SPDX SBOM"
+        required: false
+        type: boolean
+        default: true
+      attest_provenance:
+        description: "Whether to attest SLSA Build Level 3 provenance"
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   contents: read
   packages: write
+  id-token: write
+  attestations: write
 
 jobs:
   docker:
@@ -28,10 +50,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to GHCR
+      - name: Log in to Registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ inputs.registry }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -39,12 +61,13 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}
+          images: ${{ inputs.registry == 'ghcr.io' && format('ghcr.io/{0}/{1}', github.repository_owner, inputs.image_name) || format('{0}/{1}', inputs.registry, inputs.image_name) }}
           tags: |
             type=sha
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: ${{ inputs.context }}
@@ -54,3 +77,36 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Generate SBOM (Anchore Syft)
+        if: ${{ inputs.generate_sbom }}
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ steps.meta.outputs.tags[0] }}
+          format: spdx-json
+          output-file: ${{ runner.temp }}/sbom.spdx.json
+          upload-artifact: false
+
+      - name: Upload SBOM
+        if: ${{ inputs.generate_sbom }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.image_name }}-sbom
+          path: ${{ runner.temp }}/sbom.spdx.json
+
+      - name: Attest SBOM
+        if: ${{ inputs.generate_sbom }}
+        uses: actions/attest@v4
+        with:
+          subject-name: ${{ steps.meta.outputs.tags[0] }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          sbom-path: ${{ runner.temp }}/sbom.spdx.json
+          push-to-registry: true
+
+      - name: Attest SLSA Provenance
+        if: ${{ inputs.attest_provenance }}
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ steps.meta.outputs.tags[0] }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
