@@ -26,6 +26,9 @@ SLSA Build Level 3 addresses critical threats in the software supply chain:
 | Parameter | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `image-name` | `string` | **Yes** | — | Fully qualified container image name (e.g., `ghcr.io/oss-slu/oss_dev_analytics`). |
+| `harbor-image` | `string` | No | `""` | Optional target image name on on-prem Harbor registry (e.g. `registry.oss-slu.online/repoexplorer/app`). |
+| `harbor-registry` | `string` | No | `registry.oss-slu.online` | On-prem Harbor container registry host. |
+| `report-harbor-scan` | `boolean` | No | `true` | Whether to poll Harbor Trivy scan API and report results in GitHub Actions Step Summary. |
 | `context` | `string` | No | `.` | Docker build context directory. |
 | `file` | `string` | No | `Dockerfile` | Path to Dockerfile relative to context. |
 | `target` | `string` | No | `""` | Target build stage for multi-stage Dockerfiles. |
@@ -41,15 +44,25 @@ SLSA Build Level 3 addresses critical threats in the software supply chain:
 | `attest-provenance` | `boolean` | No | `true` | Whether to attest SLSA Build Level 3 provenance. |
 | `attest-sbom` | `boolean` | No | `true` | Whether to cryptographically attest the generated SBOM bound to the container image digest. |
 
+### Secrets
+
+| Secret | Required | Description |
+|---|---|---|
+| `HARBOR_ROBOT_USERNAME` | No | Push robot username for on-prem Harbor registry (e.g. `robot$repoexplorer+push`). Passed via `secrets: inherit`. |
+| `HARBOR_ROBOT_PASSWORD` | No | Push robot secret token for on-prem Harbor registry. Passed via `secrets: inherit`. |
+
 ### Outputs
 
 | Output | Description |
 |---|---|
 | `image-digest` | Immutable SHA256 digest of the built image (e.g., `sha256:7b1e...`). |
 | `image-ref` | Full canonical image reference including digest (`ghcr.io/oss-slu/app@sha256:...`). |
+| `harbor-image-ref` | Full canonical Harbor image reference including digest (`registry.oss-slu.online/app@sha256:...`). |
 | `attestation-url` | Web URL to the GitHub-hosted cryptographic attestation summary. |
 | `sbom-attestation-url` | Web URL to the GitHub-hosted cryptographic SBOM attestation summary. |
 | `sbom-digest` | SHA256 content digest of the generated SBOM JSON document. |
+| `harbor-scan-severity` | Overall severity from Harbor's automated Trivy scan (`Critical`, `High`, `Medium`, `Low`). |
+| `harbor-scan-total` | Total vulnerability count detected by Harbor's Trivy scanner. |
 
 ---
 

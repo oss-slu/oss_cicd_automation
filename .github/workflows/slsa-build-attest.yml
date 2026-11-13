@@ -7,6 +7,21 @@ on:
         description: "Target image name (e.g. ghcr.io/oss-slu/oss_dev_analytics)"
         required: true
         type: string
+      harbor-image:
+        description: "Target image name on on-prem Harbor registry (e.g. registry.oss-slu.online/repoexplorer/app)"
+        required: false
+        type: string
+        default: ""
+      harbor-registry:
+        description: "Harbor container registry host"
+        required: false
+        type: string
+        default: "registry.oss-slu.online"
+      report-harbor-scan:
+        description: "Whether to poll Harbor Trivy scan API and report results in GitHub Actions Step Summary"
+        required: false
+        type: boolean
+        default: true
       context:
         description: "Docker build context directory"
         required: false
@@ -77,6 +92,13 @@ on:
         required: false
         type: boolean
         default: true
+    secrets:
+      HARBOR_ROBOT_USERNAME:
+        description: "Username for Harbor registry push robot"
+        required: false
+      HARBOR_ROBOT_PASSWORD:
+        description: "Password/secret token for Harbor registry push robot"
+        required: false
     outputs:
       image-digest:
         description: "The immutable sha256 digest of the built container image"
@@ -84,6 +106,9 @@ on:
       image-ref:
         description: "The fully qualified image reference including sha256 digest"
         value: ${{ jobs.build-and-attest.outputs.image-ref }}
+      harbor-image-ref:
+        description: "The fully qualified Harbor image reference including sha256 digest"
+        value: ${{ jobs.build-and-attest.outputs.harbor-image-ref }}
       attestation-url:
         description: "The URL of the generated SLSA provenance attestation"
         value: ${{ jobs.build-and-attest.outputs.attestation-url }}
@@ -93,6 +118,12 @@ on:
       sbom-digest:
         description: "SHA256 digest of the generated SBOM"
         value: ${{ jobs.build-and-attest.outputs.sbom-digest }}
+      harbor-scan-severity:
+        description: "Harbor Trivy vulnerability scan overall severity"
+        value: ${{ jobs.build-and-attest.outputs.harbor-scan-severity }}
+      harbor-scan-total:
+        description: "Harbor Trivy vulnerability scan total count"
+        value: ${{ jobs.build-and-attest.outputs.harbor-scan-total }}
 
 permissions:
   contents: read
@@ -107,9 +138,12 @@ jobs:
     outputs:
       image-digest: ${{ steps.build.outputs.digest }}
       image-ref: ${{ inputs.image-name }}@${{ steps.build.outputs.digest }}
+      harbor-image-ref: ${{ inputs.harbor-image != '' && format('{0}@{1}', inputs.harbor-image, steps.build.outputs.digest) || '' }}
       attestation-url: ${{ steps.attest.outputs.attestation-url }}
       sbom-attestation-url: ${{ steps.attest-sbom-predicate.outputs.attestation-url != '' && steps.attest-sbom-predicate.outputs.attestation-url || steps.attest-sbom-subject.outputs.attestation-url }}
       sbom-digest: ${{ steps.sbom-hash.outputs.digest }}
+      harbor-scan-severity: ${{ steps.harbor-scan.outputs.severity }}
+      harbor-scan-total: ${{ steps.harbor-scan.outputs.total }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -125,16 +159,27 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Log in to Harbor Registry
+        if: ${{ inputs.push && inputs.harbor-image != '' && secrets.HARBOR_ROBOT_USERNAME != '' }}
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+        with:
+          registry: ${{ inputs.harbor-registry }}
+          username: ${{ secrets.HARBOR_ROBOT_USERNAME }}
+          password: ${{ secrets.HARBOR_ROBOT_PASSWORD }}
+
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@369eb591f429131d6889c46b94e711f089e6ca96 # v5.6.1
         with:
-          images: ${{ inputs.image-name }}
+          images: |
+            ${{ inputs.image-name }}
+            ${{ inputs.harbor-image }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=sha,format=long
+            type=sha,format=short
             type=raw,value=latest,enable={{is_default_branch}}
             ${{ inputs.tags }}
 
@@ -152,6 +197,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          provenance: false
 
       - name: Generate SBOM (Anchore Syft)
         id: sbom
@@ -214,3 +260,127 @@ jobs:
           subject-name: ${{ inputs.image-name }}
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
+
+      - name: Verify SLSA Provenance Attestation
+        if: ${{ inputs.push && inputs.attest-provenance }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Verifying cryptographically signed SLSA provenance attestation..."
+          for i in {1..5}; do
+            if gh attestation verify "oci://${{ inputs.image-name }}@${{ steps.build.outputs.digest }}" \
+              --owner "${{ github.repository_owner }}"; then
+              echo "Provenance attestation verified successfully!"
+              exit 0
+            fi
+            echo "Waiting for attestation index... (attempt $i/5)"
+            sleep 5
+          done
+          echo "Attestation verification timed out or failed."
+          exit 1
+
+      - name: Poll & Report Harbor Trivy Vulnerability Scan
+        id: harbor-scan
+        if: ${{ inputs.push && inputs.harbor-image != '' && secrets.HARBOR_ROBOT_USERNAME != '' && inputs.report-harbor-scan }}
+        shell: bash
+        env:
+          HARBOR_USER: ${{ secrets.HARBOR_ROBOT_USERNAME }}
+          HARBOR_PASS: ${{ secrets.HARBOR_ROBOT_PASSWORD }}
+          HARBOR_IMG: ${{ inputs.harbor-image }}
+          REGISTRY_HOST: ${{ inputs.harbor-registry }}
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          PATH_PART="${HARBOR_IMG#"$REGISTRY_HOST"/}"
+          PROJECT=$(echo "$PATH_PART" | cut -d'/' -f1)
+          REPO=$(echo "$PATH_PART" | cut -d'/' -f2-)
+
+          ARTIFACT_URL="https://${REGISTRY_HOST}/api/v2.0/projects/${PROJECT}/repositories/${REPO}/artifacts/${DIGEST}?with_scan_overview=true"
+          VULN_URL="https://${REGISTRY_HOST}/api/v2.0/projects/${PROJECT}/repositories/${REPO}/artifacts/${DIGEST}/additions/vulnerabilities"
+
+          echo "Connecting to Harbor at ${REGISTRY_HOST}..."
+          echo "Target artifact: ${PROJECT}/${REPO}@${DIGEST}"
+
+          SCAN_STATUS="Pending"
+          ATTEMPTS=0
+          MAX_ATTEMPTS=18
+
+          while [ "$ATTEMPTS" -lt "$MAX_ATTEMPTS" ]; do
+            RESPONSE=$(curl -s -u "${HARBOR_USER}:${HARBOR_PASS}" -H "User-Agent: curl/7.81.0" "$ARTIFACT_URL" || true)
+
+            if [ -n "$RESPONSE" ]; then
+              SCAN_STATUS=$(echo "$RESPONSE" | jq -r '.scan_overview[]?.scan_status // empty')
+              if [ "$SCAN_STATUS" = "Success" ]; then
+                echo "Harbor Trivy scan completed successfully."
+                break
+              elif [ "$SCAN_STATUS" = "Error" ] || [ "$SCAN_STATUS" = "Stopped" ]; then
+                echo "Harbor scan ended with status: $SCAN_STATUS"
+                break
+              fi
+            fi
+
+            ATTEMPTS=$((ATTEMPTS + 1))
+            echo "Scan status: ${SCAN_STATUS:-Queued} (attempt $ATTEMPTS/$MAX_ATTEMPTS)... waiting 5s"
+            sleep 5
+          done
+
+          if [ "$SCAN_STATUS" = "Success" ]; then
+            SEVERITY=$(echo "$RESPONSE" | jq -r '.scan_overview[]?.severity // "Unknown"')
+            TOTAL=$(echo "$RESPONSE" | jq -r '.scan_overview[]?.summary.total // 0')
+            FIXABLE=$(echo "$RESPONSE" | jq -r '.scan_overview[]?.summary.fixable // 0')
+            CRITICAL=$(echo "$RESPONSE" | jq -r '.scan_overview[]?.summary.summary.Critical // 0')
+            HIGH=$(echo "$RESPONSE" | jq -r '.scan_overview[]?.summary.summary.High // 0')
+            MEDIUM=$(echo "$RESPONSE" | jq -r '.scan_overview[]?.summary.summary.Medium // 0')
+            LOW=$(echo "$RESPONSE" | jq -r '.scan_overview[]?.summary.summary.Low // 0')
+            SCANNER_NAME=$(echo "$RESPONSE" | jq -r '.scan_overview[]?.scanner.name // "Trivy"')
+            SCANNER_VER=$(echo "$RESPONSE" | jq -r '.scan_overview[]?.scanner.version // ""')
+
+            echo "severity=$SEVERITY" >> "$GITHUB_OUTPUT"
+            echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
+
+            VULN_RESP=$(curl -s -u "${HARBOR_USER}:${HARBOR_PASS}" -H "User-Agent: curl/7.81.0" "$VULN_URL" || true)
+
+            {
+              echo "### 🛡️ Harbor Vulnerability Scan Results (${SCANNER_NAME} ${SCANNER_VER})"
+              echo "- **Registry Image:** \`${HARBOR_IMG}\`"
+              echo "- **Digest:** \`${DIGEST}\`"
+              echo "- **Status:** \`${SCAN_STATUS}\`"
+              echo "- **Overall Severity:** **${SEVERITY}**"
+              echo ""
+              echo "| Critical | High | Medium | Low | Total | Fixable |"
+              echo "| :---: | :---: | :---: | :---: | :---: | :---: |"
+              echo "| **${CRITICAL}** | **${HIGH}** | ${MEDIUM} | ${LOW} | **${TOTAL}** | ${FIXABLE} |"
+              echo ""
+            } >> "$GITHUB_STEP_SUMMARY"
+
+            if [ "$TOTAL" -gt 0 ] && [ -n "$VULN_RESP" ]; then
+              {
+                echo "<details>"
+                echo "<summary><b>Top Detected Vulnerabilities (${TOTAL} total)</b></summary>"
+                echo ""
+                echo "| CVE | Package | Severity | Current Version | Fixed In |"
+                echo "| :--- | :--- | :--- | :--- | :--- |"
+              } >> "$GITHUB_STEP_SUMMARY"
+
+              echo "$VULN_RESP" | jq -r '
+                .[]?.vulnerabilities[]? // empty
+                | select(.severity == "Critical" or .severity == "High" or .severity == "Medium")
+                | "| [\(.id)](\(.links[0] // "#")) | `\(.package)` | **\(.severity)** | `\(.version)` | `\(.fix_version // "none")` |"
+              ' | head -n 15 >> "$GITHUB_STEP_SUMMARY" || true
+
+              echo "</details>" >> "$GITHUB_STEP_SUMMARY"
+            fi
+
+            if [ "$CRITICAL" -gt 0 ]; then
+              echo "::warning::Harbor Trivy scan reported ${CRITICAL} CRITICAL vulnerabilities in ${HARBOR_IMG}."
+            elif [ "$HIGH" -gt 0 ]; then
+              echo "::notice::Harbor Trivy scan reported ${HIGH} HIGH vulnerabilities in ${HARBOR_IMG}."
+            fi
+          else
+            echo "severity=Unknown" >> "$GITHUB_OUTPUT"
+            echo "total=0" >> "$GITHUB_OUTPUT"
+            {
+              echo "### 🛡️ Harbor Vulnerability Scan"
+              echo "- **Registry Image:** \`${HARBOR_IMG}\`"
+              echo "- **Scan Status:** \`${SCAN_STATUS}\` (timed out or scan unavailable)"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
