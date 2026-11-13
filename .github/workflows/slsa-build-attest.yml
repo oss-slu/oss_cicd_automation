@@ -92,13 +92,6 @@ on:
         required: false
         type: boolean
         default: true
-    secrets:
-      HARBOR_ROBOT_USERNAME:
-        description: "Username for Harbor registry push robot"
-        required: false
-      HARBOR_ROBOT_PASSWORD:
-        description: "Password/secret token for Harbor registry push robot"
-        required: false
     outputs:
       image-digest:
         description: "The immutable sha256 digest of the built container image"
@@ -106,9 +99,6 @@ on:
       image-ref:
         description: "The fully qualified image reference including sha256 digest"
         value: ${{ jobs.build-and-attest.outputs.image-ref }}
-      harbor-image-ref:
-        description: "The fully qualified Harbor image reference including sha256 digest"
-        value: ${{ jobs.build-and-attest.outputs.harbor-image-ref }}
       attestation-url:
         description: "The URL of the generated SLSA provenance attestation"
         value: ${{ jobs.build-and-attest.outputs.attestation-url }}
@@ -138,7 +128,6 @@ jobs:
     outputs:
       image-digest: ${{ steps.build.outputs.digest }}
       image-ref: ${{ inputs.image-name }}@${{ steps.build.outputs.digest }}
-      harbor-image-ref: ${{ inputs.harbor-image != '' && format('{0}@{1}', inputs.harbor-image, steps.build.outputs.digest) || '' }}
       attestation-url: ${{ steps.attest.outputs.attestation-url }}
       sbom-attestation-url: ${{ steps.attest-sbom-predicate.outputs.attestation-url != '' && steps.attest-sbom-predicate.outputs.attestation-url || steps.attest-sbom-subject.outputs.attestation-url }}
       sbom-digest: ${{ steps.sbom-hash.outputs.digest }}
