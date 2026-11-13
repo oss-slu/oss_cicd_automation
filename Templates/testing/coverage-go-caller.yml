@@ -1,0 +1,45 @@
+# Caller template for Go code coverage reporting.
+# Copy this into your repository's .github/workflows/ directory.
+#
+# Prerequisites:
+#   - Run tests with coverage: go test -coverprofile=coverage.out ./...
+#   - The coverage.out file will be parsed and posted as a PR comment.
+
+name: Code Coverage (Go)
+
+on:
+  pull_request:
+    paths:
+      - '**.go'
+      - 'go.mod'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  coverage:
+    name: Run Coverage and Post Report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Go
+        uses: actions/setup-go@41dfa104286548725115896d4d53d65264b26224 # v5.1.0
+        with:
+          go-version: '1.22'
+
+      - name: Run Tests with Coverage
+        run: go test -coverprofile=coverage.out ./...
+
+      - name: Convert Coverage to JSON
+        run: go tool cover -func=coverage.out > coverage.txt
+
+      - name: Post Coverage Report
+        uses: ./.github/workflows/reusable-coverage-report.yml
+        with:
+          coverage_format: go
+          coverage_file: coverage.txt
+          comment_header: "## Go Code Coverage Report"

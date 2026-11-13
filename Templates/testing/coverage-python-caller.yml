@@ -1,0 +1,48 @@
+# Caller template for Python code coverage reporting using pytest-cov.
+# Copy this into your repository's .github/workflows/ directory.
+#
+# Prerequisites:
+#   - Install pytest-cov: pip install pytest-cov
+#   - Run tests with coverage: pytest --cov=. --cov-report=xml
+#   - The coverage.xml file will be parsed and posted as a PR comment.
+
+name: Code Coverage (Python)
+
+on:
+  pull_request:
+    paths:
+      - '**.py'
+      - 'pyproject.toml'
+      - 'setup.py'
+      - 'requirements.txt'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  coverage:
+    name: Run Coverage and Post Report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@0b548d7bd9fa301966b700ce7231c5215f79bf58 # v5.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies
+        run: pip install pytest pytest-cov
+
+      - name: Run Tests with Coverage
+        run: pytest --cov=. --cov-report=xml --cov-report=term-missing
+
+      - name: Post Coverage Report
+        uses: ./.github/workflows/reusable-coverage-report.yml
+        with:
+          coverage_format: cobertura
+          coverage_file: coverage.xml
+          comment_header: "## Python Code Coverage Report"
