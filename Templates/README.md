@@ -25,6 +25,8 @@ These templates ensure every workflow follows consistent standards for reliabili
 
 - *(Add more templates here as needed)*  
   For example:  
+  - `build-attest/slsa-build-attest-caller.yml` → Drop-in caller template for SLSA Level 3 container builds, Syft SBOM generation, cryptographic provenance attestation, Harbor dual-push, and Trivy scan reporting.
+  - `branch-sync/sync-staging-main.yml` → Drop-in workflow for automated reconciliation of `main` into `staging` to prevent branch drift in GitOps environments.
   - `reusable-test.yml` → A base test workflow using reusable actions  
   - `deploy-template.yml` → Standardized deployment pipeline template  
   - `security/secret-scan-caller.yml` → Reusable workflow caller template for pre-merge Gitleaks secret detection.
