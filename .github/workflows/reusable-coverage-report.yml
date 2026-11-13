@@ -1,0 +1,121 @@
+name: Reusable Code Coverage Reporter
+
+on:
+  workflow_call:
+    inputs:
+      coverage_format:
+        description: "Coverage file format: cobertura, lcov, or go"
+        type: string
+        required: true
+        default: cobertura
+      coverage_file:
+        description: "Path to the coverage file (e.g., coverage.xml, lcov.info, coverage.out)"
+        type: string
+        required: true
+        default: coverage.xml
+      comment_header:
+        description: "Header text for the PR comment"
+        type: string
+        required: false
+        default: "## Code Coverage Report"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  coverage-report:
+    name: Parse and Post Coverage Report
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Parse Cobertura XML (Python / pytest-cov)
+        if: inputs.coverage_format == 'cobertura'
+        id: parse-cobertura
+        run: |
+          COVERAGE_FILE="${{ inputs.coverage_file }}"
+          if [ -f "$COVERAGE_FILE" ]; then
+            TOTAL=$(xmllint --xpath "sum(//line[@hits!='0'])" "$COVERAGE_FILE" 2>/dev/null || echo "0")
+            COVERED=$(xmllint --xpath "sum(//line[@hits!='0'])" "$COVERAGE_FILE" 2>/dev/null || echo "0")
+            MISSING=$(xmllint --xpath "sum(//line[@hits='0'])" "$COVERAGE_FILE" 2>/dev/null || echo "0")
+
+            if [ "$((COVERED + MISSING))" -gt 0 ]; then
+              PERCENT=$(awk "BEGIN {printf \"%.2f\", ($COVERED / ($COVERED + MISSING)) * 100}")
+            else
+              PERCENT="0.00"
+            fi
+
+            echo "covered=$COVERED" >> "$GITHUB_OUTPUT"
+            echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
+            echo "percent=$PERCENT" >> "$GITHUB_OUTPUT"
+          else
+            echo "covered=0" >> "$GITHUB_OUTPUT"
+            echo "total=0" >> "$GITHUB_OUTPUT"
+            echo "percent=0.00" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Parse lcov.info (Jest / Node.js)
+        if: inputs.coverage_format == 'lcov'
+        id: parse-lcov
+        run: |
+          COVERAGE_FILE="${{ inputs.coverage_file }}"
+          if [ -f "$COVERAGE_FILE" ]; then
+            LINES=$(grep -c "^LH:" "$COVERAGE_FILE" || echo "0")
+            LINES_FOUND=$(grep -c "^LF:" "$COVERAGE_FILE" || echo "0")
+
+            if [ "$LINES_FOUND" -gt 0 ]; then
+              PERCENT=$(awk "BEGIN {printf \"%.2f\", ($LINES / $LINES_FOUND) * 100}")
+            else
+              PERCENT="0.00"
+            fi
+
+            echo "covered=$LINES" >> "$GITHUB_OUTPUT"
+            echo "total=$LINES_FOUND" >> "$GITHUB_OUTPUT"
+            echo "percent=$PERCENT" >> "$GITHUB_OUTPUT"
+          else
+            echo "covered=0" >> "$GITHUB_OUTPUT"
+            echo "total=0" >> "$GITHUB_OUTPUT"
+            echo "percent=0.00" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Parse Go coverage.out
+        if: inputs.coverage_format == 'go'
+        id: parse-go
+        run: |
+          COVERAGE_FILE="${{ inputs.coverage_file }}"
+          if [ -f "$COVERAGE_FILE" ]; then
+            COVERED=$(grep -oP '^\s*covered:\s*\K\d+' "$COVERAGE_FILE" | head -1)
+            TOTAL=$(grep -oP '^\s*total:\s*\K\d+' "$COVERAGE_FILE" | head -1)
+
+            COVERED=${COVERED:-0}
+            TOTAL=${TOTAL:-0}
+
+            if [ "$TOTAL" -gt 0 ]; then
+              PERCENT=$(awk "BEGIN {printf \"%.2f\", ($COVERED / $TOTAL) * 100}")
+            else
+              PERCENT="0.00"
+            fi
+
+            echo "covered=$COVERED" >> "$GITHUB_OUTPUT"
+            echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
+            echo "percent=$PERCENT" >> "$GITHUB_OUTPUT"
+          else
+            echo "covered=0" >> "$GITHUB_OUTPUT"
+            echo "total=0" >> "$GITHUB_OUTPUT"
+            echo "percent=0.00" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post Coverage Comment
+        uses: marocchino/sticky-pull-request-comment@5770ad5eb8f42dd2c4f34da00c94c5381e49af88 # v3.0.5
+        with:
+          header: coverage-report
+          message: |
+            ${{ inputs.comment_header }}
+
+            | Metric | Value |
+            |--------|-------|
+            | Coverage | ${{ steps.parse-cobertura.outputs.percent || steps.parse-lcov.outputs.percent || steps.parse-go.outputs.percent }}% |
+            | Lines Covered | ${{ steps.parse-cobertura.outputs.covered || steps.parse-lcov.outputs.covered || steps.parse-go.outputs.covered }} |
+            | Total Lines | ${{ steps.parse-cobertura.outputs.total || steps.parse-lcov.outputs.total || steps.parse-go.outputs.total }} |
