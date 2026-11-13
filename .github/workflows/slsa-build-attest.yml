@@ -160,7 +160,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Log in to Harbor Registry
-        if: ${{ inputs.push && inputs.harbor-image != '' && secrets.HARBOR_ROBOT_USERNAME != '' }}
+        if: ${{ inputs.push && inputs.harbor-image != '' }}
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
         with:
           registry: ${{ inputs.harbor-registry }}
@@ -281,7 +281,7 @@ jobs:
 
       - name: Poll & Report Harbor Trivy Vulnerability Scan
         id: harbor-scan
-        if: ${{ inputs.push && inputs.harbor-image != '' && secrets.HARBOR_ROBOT_USERNAME != '' && inputs.report-harbor-scan }}
+        if: ${{ inputs.push && inputs.harbor-image != '' && inputs.report-harbor-scan }}
         shell: bash
         env:
           HARBOR_USER: ${{ secrets.HARBOR_ROBOT_USERNAME }}
@@ -290,6 +290,10 @@ jobs:
           REGISTRY_HOST: ${{ inputs.harbor-registry }}
           DIGEST: ${{ steps.build.outputs.digest }}
         run: |
+          if [ -z "$HARBOR_USER" ] || [ -z "$HARBOR_PASS" ]; then
+            echo "HARBOR_ROBOT_USERNAME or HARBOR_ROBOT_PASSWORD secret not set; skipping Harbor vulnerability scan reporting."
+            exit 0
+          fi
           PATH_PART="${HARBOR_IMG#"$REGISTRY_HOST"/}"
           PROJECT=$(echo "$PATH_PART" | cut -d'/' -f1)
           REPO=$(echo "$PATH_PART" | cut -d'/' -f2-)
