@@ -35,6 +35,11 @@ SLSA Build Level 3 addresses critical threats in the software supply chain:
 | `runner` | `string` | No | `ubuntu-latest` | GitHub runner OS. Must remain a GitHub-hosted runner to preserve SLSA L3 isolation. |
 | `registry` | `string` | No | `ghcr.io` | Target container registry. |
 | `tags` | `string` | No | `""` | Additional multiline tag specifications for `docker/metadata-action`. |
+| `generate-sbom` | `boolean` | No | `true` | Whether to generate an SPDX Software Bill of Materials (SBOM) using Anchore Syft. |
+| `sbom-format` | `string` | No | `spdx-json` | SBOM specification format (`spdx-json`, `cyclonedx-json`). |
+| `sbom-artifact-name` | `string` | No | `""` | Custom name for the uploaded SBOM workflow artifact. |
+| `attest-provenance` | `boolean` | No | `true` | Whether to attest SLSA Build Level 3 provenance. |
+| `attest-sbom` | `boolean` | No | `true` | Whether to cryptographically attest the generated SBOM bound to the container image digest. |
 
 ### Outputs
 
@@ -43,6 +48,8 @@ SLSA Build Level 3 addresses critical threats in the software supply chain:
 | `image-digest` | Immutable SHA256 digest of the built image (e.g., `sha256:7b1e...`). |
 | `image-ref` | Full canonical image reference including digest (`ghcr.io/oss-slu/app@sha256:...`). |
 | `attestation-url` | Web URL to the GitHub-hosted cryptographic attestation summary. |
+| `sbom-attestation-url` | Web URL to the GitHub-hosted cryptographic SBOM attestation summary. |
+| `sbom-digest` | SHA256 content digest of the generated SBOM JSON document. |
 
 ---
 
