@@ -108,7 +108,7 @@ jobs:
       image-digest: ${{ steps.build.outputs.digest }}
       image-ref: ${{ inputs.image-name }}@${{ steps.build.outputs.digest }}
       attestation-url: ${{ steps.attest.outputs.attestation-url }}
-      sbom-attestation-url: ${{ steps.attest-sbom.outputs.attestation-url }}
+      sbom-attestation-url: ${{ steps.attest-sbom-predicate.outputs.attestation-url != '' && steps.attest-sbom-predicate.outputs.attestation-url || steps.attest-sbom-subject.outputs.attestation-url }}
       sbom-digest: ${{ steps.sbom-hash.outputs.digest }}
     steps:
       - name: Checkout repository
@@ -163,13 +163,22 @@ jobs:
           output-file: ${{ runner.temp }}/sbom.spdx.json
           upload-artifact: false
 
-      - name: Calculate SBOM Digest
+      - name: Calculate SBOM Digest & Check Size
         id: sbom-hash
         if: ${{ inputs.push && inputs.generate-sbom }}
         shell: bash
         run: |
           DIGEST=$(sha256sum "${{ runner.temp }}/sbom.spdx.json" | awk '{print $1}')
           echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+          SIZE=$(wc -c < "${{ runner.temp }}/sbom.spdx.json")
+          echo "size=$SIZE" >> "$GITHUB_OUTPUT"
+          # GitHub Actions Attestation service limits in-toto predicate size to 16MB (16777216 bytes).
+          # If the SBOM JSON exceeds 15.5MB, attest it as an artifact subject rather than inline predicate.
+          if [ "$SIZE" -lt 15500000 ]; then
+            echo "can-attest-predicate=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "can-attest-predicate=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Upload SBOM Artifact
         if: ${{ inputs.push && inputs.generate-sbom }}
@@ -179,15 +188,23 @@ jobs:
           path: ${{ runner.temp }}/sbom.spdx.json
           if-no-files-found: error
 
-      - name: Attest SBOM
-        id: attest-sbom
-        if: ${{ inputs.push && inputs.generate-sbom && inputs.attest-sbom }}
+      - name: Attest SBOM (Inline Predicate)
+        id: attest-sbom-predicate
+        if: ${{ inputs.push && inputs.generate-sbom && inputs.attest-sbom && steps.sbom-hash.outputs.can-attest-predicate == 'true' }}
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
         with:
           subject-name: ${{ inputs.image-name }}
           subject-digest: ${{ steps.build.outputs.digest }}
           sbom-path: ${{ runner.temp }}/sbom.spdx.json
           push-to-registry: true
+
+      - name: Attest SBOM (Artifact Subject)
+        id: attest-sbom-subject
+        if: ${{ inputs.push && inputs.generate-sbom && inputs.attest-sbom && steps.sbom-hash.outputs.can-attest-predicate == 'false' }}
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: ${{ runner.temp }}/sbom.spdx.json
+          push-to-registry: false
 
       - name: Attest SLSA Build Level 3 Provenance
         id: attest
