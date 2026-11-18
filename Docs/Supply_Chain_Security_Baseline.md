@@ -193,14 +193,15 @@ syft my-docker-image:latest -o spdx-json=my-image-sbom.spdx.json
 ```
 
 ### GitHub Actions Integration
-In GitHub Actions workflows, use the official [`anchore/sbom-action@v0`](https://github.com/anchore/sbom-action) action.
+In GitHub Actions workflows, use the official [`anchore/sbom-action`](https://github.com/anchore/sbom-action) action pinned to a full commit SHA (required to pass SonarQube rule `S7637` / CWE-829 supply-chain security standards):
+`anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0` (# v0.18.0).
 
 #### Example A: Scanning an Immutable Container Image
 ```yaml
 # Step: Generate an SBOM from the newly built, pushed container image
 # IMPORTANT: Scan the exact immutable digest that was just published
 - name: Generate Container SBOM
-  uses: anchore/sbom-action@v0
+  uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
   with:
     # Use the immutable digest (sha256:...) to ensure the SBOM
     # describes the exact image that was built and attested
@@ -217,7 +218,7 @@ In GitHub Actions workflows, use the official [`anchore/sbom-action@v0`](https:/
 ```yaml
 # Step: Generate an SBOM from the compiled application directory
 - name: Generate Application Bundle SBOM
-  uses: anchore/sbom-action@v0
+  uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
   with:
     # Point Syft at the directory containing the assembled application files
     path: ./dist/my-app
@@ -440,7 +441,7 @@ jobs:
       # Step 6: Generate an SBOM from the newly pushed immutable image
       # CRITICAL: We scan the image by its immutable digest, NOT the mutable :latest tag
       - name: Generate Container SBOM with Syft
-        uses: anchore/sbom-action@v0
+        uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
         with:
           image: ${{ env.IMAGE_NAME }}@${{ steps.build_push.outputs.digest }}
           format: spdx-json
@@ -525,7 +526,7 @@ jobs:
       # Step 5: Generate the SBOM from the assembled output directory
       # This captures the actual libraries and binaries packaged by the build tool
       - name: Generate SBOM from Assembled Application Bundle
-        uses: anchore/sbom-action@v0
+        uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
         with:
           path: ./dist/MyDesktopApp
           format: spdx-json
@@ -636,7 +637,7 @@ jobs:
 
       # Generate SPDX 2.3 JSON SBOM from the resolved repository workspace
       - name: Generate Workspace SBOM with Syft
-        uses: anchore/sbom-action@v0
+        uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
         with:
           path: .
           format: spdx-json
@@ -787,7 +788,7 @@ When implementing an adoption ticket for an OSS-SLU repository, work through thi
 - [ ] **2. Identify the Final Artifact**: Determine the exact file, archive, or container image users receive.
 - [ ] **3. Add Permissions**: Add `id-token: write`, `attestations: write`, and `artifact-metadata: write` to the workflow permissions block.
 - [ ] **4. Select the Scan Target**: Choose the appropriate target for Syft (the built container image by digest, assembled directory, or repository workspace).
-- [ ] **5. Add Syft SBOM Step**: Add `anchore/sbom-action@v0` generating `<artifact>-sbom.spdx.json`.
+- [ ] **5. Add Syft SBOM Step**: Add `anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0` (# v0.18.0) generating `<artifact>-sbom.spdx.json`.
 - [ ] **6. Check SBOM Contents**: Verify the generated `.spdx.json` file contains expected dependencies.
 - [ ] **7. Preserve the SBOM**: Add `actions/upload-artifact@v4` (or attach the file to GitHub Release assets).
 - [ ] **8. Identify Immutable Subject**: Ensure you have the local file path (for binaries/SBOMs) or the image SHA-256 digest (for containers).
