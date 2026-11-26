@@ -1,0 +1,45 @@
+# Caller template for automated inactive issue and PR stale triage.
+# Copy this into your repository's .github/workflows/stale-triage.yml.
+#
+# Tip: Run once via workflow_dispatch with `debug-only: true` before enabling
+# live labeling and closing so you can review affected items in the logs.
+
+name: Stale Issue and PR Triage
+
+on:
+  schedule:
+    # Run daily at 02:00 UTC to keep grace periods and operation budgets accurate
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale-triage:
+    name: Triage Stale Issues and PRs
+    uses: oss-slu/oss_cicd_automation/.github/workflows/reusable-stale-triage.yml@main
+    permissions:
+      issues: write
+      pull-requests: write
+    with:
+      days-before-stale: 60
+      days-before-close: 7
+      exempt-issue-labels: "pinned,security,accepted,Always Open"
+      exempt-pr-labels: "pinned,security,work-in-progress,Always Open"
+      stale-issue-label: "stale"
+      stale-pr-label: "stale"
+      # Customize messages as needed for your project's tone and community norms
+      stale-issue-message: >-
+        This issue has had no recent activity and has been marked as stale.
+        If it is still relevant, please leave a comment or update it within 7 days
+        to keep it open — otherwise it will be closed automatically.
+      stale-pr-message: >-
+        This pull request has had no recent activity and has been marked as stale.
+        If you are still working on it, please push an update or leave a comment
+        within 7 days to keep it open — otherwise it will be closed automatically.
+      exempt-all-milestones: false
+      exempt-draft-pr: false
+      operations-per-run: 30
+      debug-only: false

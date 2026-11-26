@@ -15,6 +15,7 @@ This folder contains written documentation related to the CI/CD work completed t
 - **[Automated Dependency Updates Guide](Automated_Dependency_Updates_Guide.md)** – Instructions for adopting Dependabot configuration templates, understanding grouping rules, and setting up auto-merge strategies.
 - **[PR Size and Component Labeler Guide](PR_Labeler_Guide.md)** – Instructions for adopting the automated PR size and area labeling workflow, customizing label thresholds, and configuring path-based component rules.
 - **[Container Vulnerability Scanning with Trivy](Trivy_Vulnerability_Scanning.md)** — Guide for integrating Trivy container scanning, interpreting CVE reports, and remediating vulnerable base images.
+- **[Stale Issue and PR Triage Guide](Stale_Issue_Triage.md)** — Guide for adopting the automated stale-triage workflow, configuring exemptions and grace periods, and applying gentle triage best practices.
 
 All documentation is written to support long-term maintainability, knowledge transfer, and onboarding for future contributors.
 

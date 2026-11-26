@@ -1,0 +1,108 @@
+name: Reusable Stale Issue and PR Triage
+
+on:
+  workflow_call:
+    inputs:
+      days-before-stale:
+        description: "Days of inactivity before marking an issue or pull request as stale (-1 to disable)"
+        required: false
+        type: number
+        default: 60
+      days-before-close:
+        description: "Days after being marked stale before closing an inactive issue or pull request (-1 to disable)"
+        required: false
+        type: number
+        default: 7
+      exempt-issue-labels:
+        description: "Comma-separated list of issue labels exempt from stale triage"
+        required: false
+        type: string
+        default: "pinned,security,accepted,Always Open"
+      exempt-pr-labels:
+        description: "Comma-separated list of pull request labels exempt from stale triage"
+        required: false
+        type: string
+        default: "pinned,security,work-in-progress,Always Open"
+      stale-issue-label:
+        description: "Label applied to issues when marked as stale"
+        required: false
+        type: string
+        default: "stale"
+      stale-pr-label:
+        description: "Label applied to pull requests when marked as stale"
+        required: false
+        type: string
+        default: "stale"
+      stale-issue-message:
+        description: "Message posted on an issue when it is marked as stale"
+        required: false
+        type: string
+        default: "This issue has had no recent activity and has been marked as stale. If it is still relevant, please leave a comment or update it within 7 days to keep it open — otherwise it will be closed automatically to help maintainers keep the backlog organized."
+      stale-pr-message:
+        description: "Message posted on a pull request when it is marked as stale"
+        required: false
+        type: string
+        default: "This pull request has had no recent activity and has been marked as stale. If you are still working on it, please push an update or leave a comment within 7 days to keep it open — otherwise it will be closed automatically."
+      close-issue-message:
+        description: "Optional message posted when a stale issue is closed"
+        required: false
+        type: string
+        default: "This issue was closed automatically due to continued inactivity after being marked stale. Feel free to reopen it or open a new issue if work resumes."
+      close-pr-message:
+        description: "Optional message posted when a stale pull request is closed"
+        required: false
+        type: string
+        default: "This pull request was closed automatically due to continued inactivity after being marked stale. Feel free to reopen it when you are ready to continue."
+      exempt-all-milestones:
+        description: "Exempt all issues and pull requests assigned to a milestone"
+        required: false
+        type: boolean
+        default: false
+      exempt-draft-pr:
+        description: "Exempt draft pull requests from stale triage"
+        required: false
+        type: boolean
+        default: false
+      operations-per-run:
+        description: "Maximum GitHub API operations per run to avoid rate limits"
+        required: false
+        type: number
+        default: 30
+      debug-only:
+        description: "Run in dry-run mode without modifying issues or pull requests"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale-triage:
+    name: Triage Stale Issues and Pull Requests
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Run actions/stale triage
+        uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-stale: ${{ inputs.days-before-stale }}
+          days-before-close: ${{ inputs.days-before-close }}
+          exempt-issue-labels: ${{ inputs.exempt-issue-labels }}
+          exempt-pr-labels: ${{ inputs.exempt-pr-labels }}
+          stale-issue-label: ${{ inputs.stale-issue-label }}
+          stale-pr-label: ${{ inputs.stale-pr-label }}
+          stale-issue-message: ${{ inputs.stale-issue-message }}
+          stale-pr-message: ${{ inputs.stale-pr-message }}
+          close-issue-message: ${{ inputs.close-issue-message }}
+          close-pr-message: ${{ inputs.close-pr-message }}
+          exempt-all-milestones: ${{ inputs.exempt-all-milestones }}
+          exempt-draft-pr: ${{ inputs.exempt-draft-pr }}
+          remove-stale-when-updated: true
+          operations-per-run: ${{ inputs.operations-per-run }}
+          debug-only: ${{ inputs.debug-only }}
